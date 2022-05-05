@@ -5,8 +5,14 @@
 
 <!-- badges: start -->
 
-[![R build
-status](https://github.com/atlas-aai/tdcmStan/workflows/R-CMD-check/badge.svg)](https://github.com/atlas-aai/tdcmStan/actions)
+[![Project Status: Active – The project has reached a stable, usable
+state and is being actively
+developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
+[![R-CMD-check](https://github.com/atlas-aai/tdcmStan/workflows/R-CMD-check/badge.svg)](https://github.com/atlas-aai/tdcmStan/actions)
+[![codecov](https://codecov.io/gh/atlas-aai/tdcmStan/branch/main/graph/badge.svg?token=TECvfoOYHh)](https://app.codecov.io/gh/atlas-aai/tdcmStan)
+![Minimal R
+Version](https://img.shields.io/badge/R%3E%3D-3.5.0-blue.svg)
+![License](https://img.shields.io/badge/License-GPL-blue.svg)
 <!-- badges: end -->
 
 ## Installation
