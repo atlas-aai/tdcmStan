@@ -1,0 +1,10 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+^\.travis\.yml$
+^README\.Rmd$
+^README-.*\.png$
+^NEWS\.md$
+.lintr
+^codecov\.yml$
+^\.github$
+.gitignore.R
