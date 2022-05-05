@@ -5,12 +5,12 @@ Version: 0.1.0
 Authors@R:
     c(person(given = "Jeffrey",
              family = "Hoover",
-             role = "aut",
+             role = c("aut", "cre", "cph"),
              email = "jeffrey.c.hoover@gmail.com",
              comment = c(ORCID = "0000-0002-0276-0308")),
       person(given = "W. Jake",
              family = "Thompson",
-             role = c("aut", "cre"),
+             role = c("aut"),
              email = "wjakethompson@gmail.com",
              comment = c(ORCID = "0000-0001-7339-0300")))
 Description: The package contains functions for automatically creating Stan code for TDCMs.
