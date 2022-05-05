@@ -1,0 +1,35 @@
+Package: tdcmStan
+Type: Package
+Title: Automating the Creation of Stan Code for TDCMs
+Version: 0.1.0
+Authors@R:
+    c(person(given = "Jeffrey",
+             family = "Hoover",
+             role = "aut",
+             email = "jeffrey.c.hoover@gmail.com",
+             comment = c(ORCID = "0000-0002-0276-0308")),
+      person(given = "W. Jake",
+             family = "Thompson",
+             role = c("aut", "cre"),
+             email = "wjakethompson@gmail.com",
+             comment = c(ORCID = "0000-0001-7339-0300")))
+Description: The package contains functions for automatically creating Stan code for TDCMs.
+License: GPL (>= 2)
+Imports:
+    dplyr (>= 1.0.7),
+    glue (>= 1.4.2),
+    here (>= 1.0.1),
+    magrittr (>= 2.0.1),
+    readr (>= 2.0.0),
+    rlang (>= 0.4.11),
+    stringr (>= 1.4.0),
+    tibble (>= 3.1.5),
+    tidyr (>= 1.1.4),
+    tidyselect (>= 1.1.1)
+Suggests:
+    testthat (>= 3.0.4)
+Depends:
+    R (>= 3.5.0)
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.1.2
