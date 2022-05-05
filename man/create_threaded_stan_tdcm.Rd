@@ -18,7 +18,7 @@ create_threaded_stan_tdcm(q_matrix, profs)
 Automating the creation of multi-threaded Stan code for a TDCM.
 }
 \examples{
-qmatrix = tibble(att_1 = c(1, 0, 1, 0, 1, 1), att_2 = c(0, 1, 0, 1, 1, 1))
-possible_profiles = tibble(att_1 = c(0, 1, 0, 1), att_2 = c(0, 1, 0, 1))
+qmatrix = tibble::tibble(att_1 = c(1, 0, 1, 0, 1, 1), att_2 = c(0, 1, 0, 1, 1, 1))
+possible_profiles = tibble::tibble(att_1 = c(0, 1, 0, 1), att_2 = c(0, 1, 0, 1))
 create_threaded_stan_tdcm(q_matrix = qmatrix, profs = possible_profiles)
 }
