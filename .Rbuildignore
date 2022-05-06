@@ -9,3 +9,4 @@
 ^\.github$
 .gitignore.R
 ^LICENSE
+^cran-comments\.md$

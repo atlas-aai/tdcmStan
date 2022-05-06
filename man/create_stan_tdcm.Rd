@@ -17,3 +17,8 @@ create_stan_tdcm(q_matrix, profs)
 \description{
 Automating the creation of Stan code for a TDCM.
 }
+\examples{
+qmatrix = tibble::tibble(att_1 = c(1, 0, 1, 0, 1, 1), att_2 = c(0, 1, 0, 1, 1, 1))
+possible_profiles = tibble::tibble(att_1 = c(0, 1, 0, 1), att_2 = c(0, 1, 0, 1))
+create_stan_tdcm(q_matrix = qmatrix, profs = possible_profiles)
+}

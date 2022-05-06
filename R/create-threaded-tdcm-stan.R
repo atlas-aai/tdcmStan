@@ -8,6 +8,11 @@
 #' @return `stan_code` A list containing the text for the Stan code blocks.
 #'
 #' @export
+#'
+#' @examples
+#' qmatrix = tibble::tibble(att_1 = c(1, 0, 1, 0, 1, 1), att_2 = c(0, 1, 0, 1, 1, 1))
+#' possible_profiles = tibble::tibble(att_1 = c(0, 1, 0, 1), att_2 = c(0, 1, 0, 1))
+#' create_threaded_stan_tdcm(q_matrix = qmatrix, profs = possible_profiles)
 create_threaded_stan_tdcm <- function(q_matrix, profs) {
   colnames(q_matrix) <- glue::glue("att_{1:ncol(q_matrix)}")
 
