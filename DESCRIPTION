@@ -23,15 +23,13 @@ License: GPL (>= 2)
 Imports:
     dplyr (>= 1.0.7),
     glue (>= 1.4.2),
-    here (>= 1.0.1),
     magrittr (>= 2.0.1),
-    readr (>= 2.0.0),
     rlang (>= 0.4.11),
     stringr (>= 1.4.0),
     tibble (>= 3.1.5),
-    tidyr (>= 1.1.4),
-    tidyselect (>= 1.1.1)
+    tidyr (>= 1.1.4)
 Suggests:
+    readr (>= 2.0.0),
     testthat (>= 3.0.4)
 Depends:
     R (>= 3.5.0)
