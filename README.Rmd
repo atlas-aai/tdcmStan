@@ -25,8 +25,14 @@ Version](https://img.shields.io/badge/R%3E%3D-3.5.0-blue.svg)
 
 ## Installation
 
+You can install from CRAN with:
+
+```{r cran-install, echo = TRUE, eval = FALSE}
+install.packages("tdcmStan")
+```
+
 You can install from GitHub with:
 
-```{r, echo = TRUE, eval = FALSE}
+```{r gh-install, echo = TRUE, eval = FALSE}
 devtools::install_github("atlas-aai/tdcmStan", dependencies = TRUE)
 ```
