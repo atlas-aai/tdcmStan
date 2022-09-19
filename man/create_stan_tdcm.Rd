@@ -4,12 +4,10 @@
 \alias{create_stan_tdcm}
 \title{Creating TDCM Stan Code}
 \usage{
-create_stan_tdcm(q_matrix, profs)
+create_stan_tdcm(q_matrix)
 }
 \arguments{
 \item{q_matrix}{A tibble containing the assessment Q-matrix.}
-
-\item{profs}{A tibble of the possible attribute mastery profiles.}
 }
 \value{
 `stan_code` A list containing the text for the Stan code blocks.
@@ -19,6 +17,5 @@ Automating the creation of Stan code for a TDCM.
 }
 \examples{
 qmatrix = tibble::tibble(att_1 = c(1, 0, 1, 0, 1, 1), att_2 = c(0, 1, 0, 1, 1, 1))
-possible_profiles = tibble::tibble(att_1 = c(0, 1, 0, 1), att_2 = c(0, 1, 0, 1))
-create_stan_tdcm(q_matrix = qmatrix, profs = possible_profiles)
+create_stan_tdcm(q_matrix = qmatrix)
 }
