@@ -3,11 +3,7 @@ test_that("Create Multi-Threaded TDCM works", {
                              att_2 = c(rep(0, 8), rep(1, 8), rep(0, 8)),
                              att_3 = c(rep(0, 16), rep(1, 8)))
 
-  profs <- tibble::tibble(att_1 = c(0, 1, 0, 0, 1, 1, 0, 1),
-                          att_2 = c(0, 0, 1, 0, 1, 0, 1, 1),
-                          att_3 = c(0, 0, 0, 1, 0, 1, 1, 1))
-
-  multi_tdcm_stan <- create_threaded_stan_tdcm(q_matrix, profs)
+  multi_tdcm_stan <- create_threaded_stan_tdcm(q_matrix)
   multi_tdcm_stan %>%
     readr::write_lines(testthat::test_path("data/multi-tdcm-stan.stan"))
 
