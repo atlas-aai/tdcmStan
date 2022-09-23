@@ -5,7 +5,6 @@ data {
   int<lower=1> C;                    // number of classes
   int<lower=1> A;                    // number of attributes
   int<lower=1,upper=I> ii[N, 2];     // item for obs n
-  int<lower=1,upper=J> jj[N, 2];     // respondent for obs n
   int<lower=0,upper=1> y[N, 2];      // score for obs n
   int<lower=1,upper=N> s[J, 2];      // starting row for j
   int<lower=1,upper=I> l[J, 2];      // number of items for j
