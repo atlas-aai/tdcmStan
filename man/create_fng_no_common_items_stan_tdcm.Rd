@@ -2,7 +2,7 @@
 % Please edit documentation in R/create-fng-tdcm-no-common-items-stan.R
 \name{create_fng_no_common_items_stan_tdcm}
 \alias{create_fng_no_common_items_stan_tdcm}
-\title{Creating Fungible TDCM with No Commeon Items Stan Code}
+\title{Creating Fungible TDCM with No Common Items Stan Code}
 \usage{
 create_fng_no_common_items_stan_tdcm(q_matrix)
 }
