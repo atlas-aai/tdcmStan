@@ -1,4 +1,4 @@
-#' Creating Fungible TDCM with No Commeon Items Stan Code
+#' Creating Fungible TDCM with No Common Items Stan Code
 #'
 #' Automating the creation of fungible Stan code for a TDCM when there are no
 #' common items.
