@@ -68,7 +68,8 @@ create_fng_no_common_items_stan_tdcm <- function(q_matrix) {
       dplyr::mutate(param = glue::glue("l{item_id}_2{att1}{att2} ~ normal(0, 2);")) %>%
       dplyr::pull(.data$param)
   }
-  multi_item_q_matrix <- q_matrix %>% dplyr::rowwise() %>%
+  multi_item_q_matrix <- q_matrix %>%
+    dplyr::rowwise() %>%
     dplyr::mutate(total = sum(dplyr::c_across(where(is.numeric)))) %>%
     tibble::rowid_to_column("item_id") %>%
     dplyr::filter(.data$total == 2) %>%
@@ -127,8 +128,8 @@ create_fng_no_common_items_stan_tdcm <- function(q_matrix) {
                                           .data$measured)) %>%
       dplyr::group_by(.data$profile, .data$item_id) %>%
       dplyr::mutate(master = mean(.data$master)) %>%
-      dplyr::ungroup() %>% dplyr::select(-.data$mastered,
-                                         -.data$mastered_att) %>%
+      dplyr::ungroup() %>%
+      dplyr::select(-.data$mastered, -.data$mastered_att) %>%
       dplyr::mutate(measured = .data$measured * .data$measured_att,
                     measured_att =
                       stringr::str_c("att_",
@@ -163,7 +164,8 @@ create_fng_no_common_items_stan_tdcm <- function(q_matrix) {
                                            names_to = "att_mastered",
                                            values_to = "mastered"),
                      by = "profile") %>%
-    dplyr::left_join(q_matrix %>% tibble::rowid_to_column("item_id") %>%
+    dplyr::left_join(q_matrix %>%
+                       tibble::rowid_to_column("item_id") %>%
                        tidyr::pivot_longer(cols = c(-.data$item_id),
                                            names_to = "att_measured",
                                            values_to = "measured"),
