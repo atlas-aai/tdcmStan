@@ -552,7 +552,7 @@ create_threaded_stan_tdcm <- function(q_matrix) {
   if (all(int2_priors == "")) {
     stan_model <-
       glue::glue("model {{",
-                 "  array[C * C] real ps;",
+                 "  array[C, C] real ps;",
                  "",
                  "  // Priors",
                  glue::glue_collapse(glue::glue("  {int0_priors}"), "\n"),

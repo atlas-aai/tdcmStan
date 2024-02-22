@@ -80,7 +80,7 @@ model {
     vector[C] tmp;
     for (c1 in 1:C) {
       for (c2 in 1:C) {
-        array[l[j, 1] real log_items;
+        array[l[j, 1]] real log_items;
         for (m in 1:l[j, 1]) {
           int i = ii[s[j, 1] + m - 1, 1];
           log_items[m] = y[s[j, 1] + m - 1, 1] * log(pi[i,c1]) + (1 - y[s[j, 1] + m - 1, 1]) * log(1 - pi[i,c1]) + y[s[j, 1] + m - 1, 2] * log(pi[i,c2]) + (1 - y[s[j, 1] + m - 1, 2]) * log(1 - pi[i,c2]);
@@ -103,7 +103,7 @@ generated quantities {
     array[C, C] real ps;
     for (c1 in 1:C) {
       for (c2 in 1:C) {
-        array[l[j, 1] real log_items;
+        array[l[j, 1]] real log_items;
         for (m in 1:l[j, 1]) {
           int i = ii[s[j, 1] + m - 1, 1];
           log_items[m] = y[s[j, 1] + m - 1, 1] * log(pi[i,c1]) + (1 - y[s[j, 1] + m - 1, 1]) * log(1 - pi[i,c1]) + y[s[j, 1] + m - 1, 2] * log(pi[i,c2]) + (1 - y[s[j, 1] + m - 1, 2]) * log(1 - pi[i,c2]);
@@ -121,7 +121,7 @@ generated quantities {
     matrix[C, C] prob_joint;
     for (c1 in 1:C) {
       for (c2 in 1:C) {
-        array[l[j, 1] real log_items;
+        array[l[j, 1]] real log_items;
         for (m in 1:l[j, 1]) {
           int i = ii[s[j, 1] + m - 1, 1];
           log_items[m] = y[s[j, 1] + m - 1, 1] * log(pi[i,c1]) + (1 - y[s[j, 1] + m - 1, 1]) * log(1 - pi[i,c1]) + y[s[j, 1] + m - 1, 2] * log(pi[i,c2]) + (1 - y[s[j, 1] + m - 1, 2]) * log(1 - pi[i,c2]);
