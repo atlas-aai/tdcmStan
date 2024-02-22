@@ -2,6 +2,8 @@
 
 * The package functions have been updated to work with new *Stan* syntax.
 
+* Added pre-compiled *Stan* scripts to receive updates for future *Stan* syntax changes.
+
 # tdcmStan 2.0.0
 
 * The function parameters have been simplified to be more user friendly.
