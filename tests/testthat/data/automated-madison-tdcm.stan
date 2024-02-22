@@ -11,22 +11,22 @@ functions {
     return x;
   }
 
-  vector sum_probs(vector beta, vector theta, real[] xr, int[] xi) {
+  vector sum_probs(vector beta, vector theta, array[] real xr, array[] int xi) {
     int Z = num_elements(xi);
     int ys = xi[Z - 1];
     int iis = xi[Z];
 
-    int y1[iis] = xi[1:iis];
-    int ii1[iis] = xi[(iis + 1):(2 * iis)];
-    int jj1[iis] = xi[((2 * iis) + 1):(3 * iis)];
-    int s1[ys] = xi[((3 * iis) + 1):((3 * iis) + ys)];
-    int l1[ys] = xi[((3 * iis) + ys + 1):((3 * iis) + (2 * ys))];
+    array[iis] int y1 = xi[1:iis];
+    array[iis] int ii1 = xi[(iis + 1):(2 * iis)];
+    array[iis] int jj1 = xi[((2 * iis) + 1):(3 * iis)];
+    array[ys] int s1 = xi[((3 * iis) + 1):((3 * iis) + ys)];
+    array[ys] int l1 = xi[((3 * iis) + ys + 1):((3 * iis) + (2 * ys))];
 
-    int y2[iis] = xi[((3 * iis) + (2 * ys) + 1):((4 * iis) + (2 * ys))];
-    int ii2[iis] = xi[((4 * iis) + (2 * ys) + 1):((5 * iis) + (2 * ys))];
-    int jj2[iis] = xi[((5 * iis) + (2 * ys) + 1):((6 * iis) + (2 * ys))];
-    int s2[ys] = xi[((6 * iis) + (2 * ys) + 1):((6 * iis) + (3 * ys))];
-    int l2[ys] = xi[((6 * iis) + (3 * ys) + 1):((6 * iis) + (4 * ys))];
+    array[iis] int y2 = xi[((3 * iis) + (2 * ys) + 1):((4 * iis) + (2 * ys))];
+    array[iis] int ii2 = xi[((4 * iis) + (2 * ys) + 1):((5 * iis) + (2 * ys))];
+    array[iis] int jj2 = xi[((5 * iis) + (2 * ys) + 1):((6 * iis) + (2 * ys))];
+    array[ys] int s2 = xi[((6 * iis) + (2 * ys) + 1):((6 * iis) + (3 * ys))];
+    array[ys] int l2 = xi[((6 * iis) + (3 * ys) + 1):((6 * iis) + (4 * ys))];
 
     int I = xi[Z - 7];
     int N = xi[Z - 6];
@@ -78,22 +78,22 @@ functions {
     return [person]';
   }
 
-  vector person_loglik(vector beta, vector theta, real[] xr, int[] xi) {
+  vector person_loglik(vector beta, vector theta, array[] real xr, array[] int xi) {
     int Z = num_elements(xi);
     int ys = xi[Z - 1];
     int iis = xi[Z];
 
-    int y1[iis] = xi[1:iis];
-    int ii1[iis] = xi[(iis + 1):(2 * iis)];
-    int jj1[iis] = xi[((2 * iis) + 1):(3 * iis)];
-    int s1[ys] = xi[((3 * iis) + 1):((3 * iis) + ys)];
-    int l1[ys] = xi[((3 * iis) + ys + 1):((3 * iis) + (2 * ys))];
+    array[iis] int y1 = xi[1:iis];
+    array[iis] int ii1 = xi[(iis + 1):(2 * iis)];
+    array[iis] int jj1 = xi[((2 * iis) + 1):(3 * iis)];
+    array[ys] int s1 = xi[((3 * iis) + 1):((3 * iis) + ys)];
+    array[ys] int l1 = xi[((3 * iis) + ys + 1):((3 * iis) + (2 * ys))];
 
-    int y2[iis] = xi[((3 * iis) + (2 * ys) + 1):((4 * iis) + (2 * ys))];
-    int ii2[iis] = xi[((4 * iis) + (2 * ys) + 1):((5 * iis) + (2 * ys))];
-    int jj2[iis] = xi[((5 * iis) + (2 * ys) + 1):((6 * iis) + (2 * ys))];
-    int s2[ys] = xi[((6 * iis) + (2 * ys) + 1):((6 * iis) + (3 * ys))];
-    int l2[ys] = xi[((6 * iis) + (3 * ys) + 1):((6 * iis) + (4 * ys))];
+    array[iis] int y2 = xi[((3 * iis) + (2 * ys) + 1):((4 * iis) + (2 * ys))];
+    array[iis] int ii2 = xi[((4 * iis) + (2 * ys) + 1):((5 * iis) + (2 * ys))];
+    array[iis] int jj2 = xi[((5 * iis) + (2 * ys) + 1):((6 * iis) + (2 * ys))];
+    array[ys] int s2 = xi[((6 * iis) + (2 * ys) + 1):((6 * iis) + (3 * ys))];
+    array[ys] int l2 = xi[((6 * iis) + (3 * ys) + 1):((6 * iis) + (4 * ys))];
 
     int I = xi[Z - 7];
     int N = xi[Z - 6];
@@ -145,22 +145,22 @@ functions {
     return person;
   }
 
-  vector resp_transition(vector beta, vector theta, real[] xr, int[] xi) {
+  vector resp_transition(vector beta, vector theta, array[] real xr, array[] int xi) {
     int Z = num_elements(xi);
     int ys = xi[Z - 1];
     int iis = xi[Z];
 
-    int y1[iis] = xi[1:iis];
-    int ii1[iis] = xi[(iis + 1):(2 * iis)];
-    int jj1[iis] = xi[((2 * iis) + 1):(3 * iis)];
-    int s1[ys] = xi[((3 * iis) + 1):((3 * iis) + ys)];
-    int l1[ys] = xi[((3 * iis) + ys + 1):((3 * iis) + (2 * ys))];
+    array[iis] int y1 = xi[1:iis];
+    array[iis] int ii1 = xi[(iis + 1):(2 * iis)];
+    array[iis] int jj1 = xi[((2 * iis) + 1):(3 * iis)];
+    array[ys] int s1 = xi[((3 * iis) + 1):((3 * iis) + ys)];
+    array[ys] int l1 = xi[((3 * iis) + ys + 1):((3 * iis) + (2 * ys))];
 
-    int y2[iis] = xi[((3 * iis) + (2 * ys) + 1):((4 * iis) + (2 * ys))];
-    int ii2[iis] = xi[((4 * iis) + (2 * ys) + 1):((5 * iis) + (2 * ys))];
-    int jj2[iis] = xi[((5 * iis) + (2 * ys) + 1):((6 * iis) + (2 * ys))];
-    int s2[ys] = xi[((6 * iis) + (2 * ys) + 1):((6 * iis) + (3 * ys))];
-    int l2[ys] = xi[((6 * iis) + (3 * ys) + 1):((6 * iis) + (4 * ys))];
+    array[iis] int y2 = xi[((3 * iis) + (2 * ys) + 1):((4 * iis) + (2 * ys))];
+    array[iis] int ii2 = xi[((4 * iis) + (2 * ys) + 1):((5 * iis) + (2 * ys))];
+    array[iis] int jj2 = xi[((5 * iis) + (2 * ys) + 1):((6 * iis) + (2 * ys))];
+    array[ys] int s2 = xi[((6 * iis) + (2 * ys) + 1):((6 * iis) + (3 * ys))];
+    array[ys] int l2 = xi[((6 * iis) + (3 * ys) + 1):((6 * iis) + (4 * ys))];
 
     int I = xi[Z - 7];
     int N = xi[Z - 6];
@@ -175,7 +175,7 @@ functions {
 
     matrix[C, C] ps;
     matrix[C, C] tau_c;
-    matrix[C, C] prob_transition_class[J];
+    array[J] matrix[C, C] prob_transition_class;
 
     vector[J * C * C] person;
 
@@ -242,7 +242,7 @@ transformed data {
   array[n_shards, (4 * ys) + (6 * iis) + 8] int xi;
 
   // an empty set of per-shard parameters
-  vector[0] theta[n_shards];
+  array[n_shards] vector[0] theta;
 
   array[n_shards,1] real xr;
   for(kk in 1:n_shards) {
@@ -282,7 +282,7 @@ transformed data {
   }
 }
 parameters {
-  simplex[C] tau[C];
+  array[C] simplex[C] tau;
   simplex[C] Vc;
   real l1_0;
   real l2_0;
@@ -608,9 +608,9 @@ model {
 }
 generated quantities {
   vector[J] log_lik;
-  matrix[C, C] format_prob_transition_class[J];
+  array[J] matrix[C, C] format_prob_transition_class;
   vector[J*C*C] prob_transition_class;
-  matrix[A, 2] prob_resp_attr[J];
+  array[J] matrix[A, 2] prob_resp_attr;
 
   log_lik = map_rect(person_loglik, beta, theta, xr, xi);
 

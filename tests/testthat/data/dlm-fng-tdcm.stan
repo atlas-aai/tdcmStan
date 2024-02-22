@@ -11,7 +11,7 @@ data {
   matrix[C,A] Alpha;                   // attribute pattern for each C
 }
 parameters {
-  simplex[C] tau[C];
+  array[C] simplex[C] tau;
   simplex[C] Vc;
   real l_0;
   real<lower=0> l_1;
@@ -94,8 +94,8 @@ model {
 }
 generated quantities {
   vector[J] log_lik;
-  matrix[C, C] prob_transition_class[J];
-  matrix[A, 2] prob_resp_attr[J];
+  array[J] matrix[C, C] prob_transition_class;
+  array[J] matrix[A, 2] prob_resp_attr;
 
   // Likelihood
   for (j in 1:J) {

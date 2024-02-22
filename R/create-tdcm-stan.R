@@ -234,7 +234,7 @@ create_stan_tdcm <- function(q_matrix) {
   if (all(int2 == "")) {
     stan_parameters <-
       glue::glue("parameters {{",
-                 "  simplex[C] tau[C];",
+                 "  array[C] simplex[C] tau;",
                  "  simplex[C] Vc;",
                  glue::glue_collapse(glue::glue("  {int0}"), "\n"),
                  glue::glue_collapse(glue::glue("  {mef}"), "\n"),
@@ -242,7 +242,7 @@ create_stan_tdcm <- function(q_matrix) {
   } else {
     stan_parameters <-
       glue::glue("parameters {{",
-                 "  simplex[C] tau[C];",
+                 "  array[C] simplex[C] tau;",
                  "  simplex[C] Vc;",
                  glue::glue_collapse(glue::glue("  {int0}"), "\n"),
                  glue::glue_collapse(glue::glue("  {mef}"), "\n"),
@@ -315,8 +315,8 @@ create_stan_tdcm <- function(q_matrix) {
   stan_generated_quantities <-
     glue::glue("generated quantities {{",
                "  vector[J] log_lik;",
-               "  matrix[C, C] prob_transition_class[J];",
-               "  matrix[A, 2] prob_resp_attr[J];",
+               "  array[J] matrix[C, C] prob_transition_class;",
+               "  array[J] matrix[A, 2] prob_resp_attr;",
                "",
                "  // Likelihood",
                "  for (j in 1:J) {{",
