@@ -1,3 +1,7 @@
+# tdcmStan 3.0.0
+
+* The package functions have been updated to work with new *Stan* syntax.
+
 # tdcmStan 2.0.0
 
 * The function parameters have been simplified to be more user friendly.
