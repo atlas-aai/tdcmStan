@@ -1,5 +1,6 @@
 ## Summary of the new changes
 * The package functions have been updated to work with the new *Stan* syntax.
+* Pre-compiled *Stan* code has been added so that the package receives updates when *Stan* syntax is updated in the future.
 * Updated the `NEWS.md` file to track changes to the package.
 
 ## Test environments
