@@ -219,22 +219,22 @@ create_stan_tdcm <- function(q_matrix) {
 
   stan_data <-
     glue::glue("data {{",
-               "  int<lower=1> I;                    // number of items",
-               "  int<lower=1> J;                    // number of respondents",
-               "  int<lower=1> N;                    // number of observations",
-               "  int<lower=1> C;                    // number of classes",
-               "  int<lower=1> A;                    // number of attributes",
-               "  int<lower=1,upper=I> ii[N, 2];     // item for obs n",
-               "  int<lower=0,upper=1> y[N, 2];      // score for obs n",
-               "  int<lower=1,upper=N> s[J, 2];      // starting row for j",
-               "  int<lower=1,upper=I> l[J, 2];      // number of items for j",
-               "  matrix[C,A] Alpha;                 // attribute pattern for each C",
+               "  int<lower=1> I;                       // number of items",
+               "  int<lower=1> J;                       // number of respondents",
+               "  int<lower=1> N;                       // number of observations",
+               "  int<lower=1> C;                       // number of classes",
+               "  int<lower=1> A;                       // number of attributes",
+               "  array[N, 2] int<lower=1,upper=I> ii;  // item for obs n",
+               "  array[N, 2] int<lower=0,upper=1> y;   // score for obs n",
+               "  array[J, 2] int<lower=1,upper=N> s;   // starting row for j",
+               "  array[J, 2] int<lower=1,upper=I> l;   // number of items for j",
+               "  matrix[C,A] Alpha;                    // attribute pattern for each C",
                "}}", .sep = "\n")
 
   if (all(int2 == "")) {
     stan_parameters <-
       glue::glue("parameters {{",
-                 "  simplex[C] tau[C];",
+                 "  array[C] simplex[C] tau;",
                  "  simplex[C] Vc;",
                  glue::glue_collapse(glue::glue("  {int0}"), "\n"),
                  glue::glue_collapse(glue::glue("  {mef}"), "\n"),
@@ -242,7 +242,7 @@ create_stan_tdcm <- function(q_matrix) {
   } else {
     stan_parameters <-
       glue::glue("parameters {{",
-                 "  simplex[C] tau[C];",
+                 "  array[C] simplex[C] tau;",
                  "  simplex[C] Vc;",
                  glue::glue_collapse(glue::glue("  {int0}"), "\n"),
                  glue::glue_collapse(glue::glue("  {mef}"), "\n"),
@@ -260,7 +260,7 @@ create_stan_tdcm <- function(q_matrix) {
   if (all(int2_priors == "")) {
     stan_model <-
       glue::glue("model {{",
-                 "  real ps[C, C];",
+                 "  array[C, C] real ps;",
                  "",
                  "  // Priors",
                  glue::glue_collapse(glue::glue("  {int0_priors}"), "\n"),
@@ -271,7 +271,7 @@ create_stan_tdcm <- function(q_matrix) {
                  "    vector[C] tmp;",
                  "    for (c1 in 1:C) {{",
                  "      for (c2 in 1:C) {{",
-                 "        real log_items[l[j, 1]];",
+                 "        array[l[j, 1]] real log_items;",
                  "        for (m in 1:l[j, 1]) {{",
                  "          int i = ii[s[j, 1] + m - 1, 1];",
                  "          log_items[m] = y[s[j, 1] + m - 1, 1] * log(pi[i,c1]) + (1 - y[s[j, 1] + m - 1, 1]) * log(1 - pi[i,c1]) + y[s[j, 1] + m - 1, 2] * log(pi[i,c2]) + (1 - y[s[j, 1] + m - 1, 2]) * log(1 - pi[i,c2]);",
@@ -286,7 +286,7 @@ create_stan_tdcm <- function(q_matrix) {
   } else {
     stan_model <-
       glue::glue("model {{",
-                 "  real ps[C, C];",
+                 "  array[C, C] real ps;",
                  "",
                  "  // Priors",
                  glue::glue_collapse(glue::glue("  {int0_priors}"), "\n"),
@@ -298,7 +298,7 @@ create_stan_tdcm <- function(q_matrix) {
                  "    vector[C] tmp;",
                  "    for (c1 in 1:C) {{",
                  "      for (c2 in 1:C) {{",
-                 "        real log_items[l[j, 1]];",
+                 "        array[l[j, 1]] real log_items;",
                  "        for (m in 1:l[j, 1]) {{",
                  "          int i = ii[s[j, 1] + m - 1, 1];",
                  "          log_items[m] = y[s[j, 1] + m - 1, 1] * log(pi[i,c1]) + (1 - y[s[j, 1] + m - 1, 1]) * log(1 - pi[i,c1]) + y[s[j, 1] + m - 1, 2] * log(pi[i,c2]) + (1 - y[s[j, 1] + m - 1, 2]) * log(1 - pi[i,c2]);",
@@ -315,16 +315,16 @@ create_stan_tdcm <- function(q_matrix) {
   stan_generated_quantities <-
     glue::glue("generated quantities {{",
                "  vector[J] log_lik;",
-               "  matrix[C, C] prob_transition_class[J];",
-               "  matrix[A, 2] prob_resp_attr[J];",
+               "  array[J] matrix[C, C] prob_transition_class;",
+               "  array[J] matrix[A, 2] prob_resp_attr;",
                "",
                "  // Likelihood",
                "  for (j in 1:J) {{",
                "    vector[C] tmp;",
-               "    real ps[C, C];",
+               "    array[C, C] real ps;",
                "    for (c1 in 1:C) {{",
                "      for (c2 in 1:C) {{",
-               "        real log_items[l[j, 1]];",
+               "        array[l[j, 1]] real log_items;",
                "        for (m in 1:l[j, 1]) {{",
                "          int i = ii[s[j, 1] + m - 1, 1];",
                "          log_items[m] = y[s[j, 1] + m - 1, 1] * log(pi[i,c1]) + (1 - y[s[j, 1] + m - 1, 1]) * log(1 - pi[i,c1]) + y[s[j, 1] + m - 1, 2] * log(pi[i,c2]) + (1 - y[s[j, 1] + m - 1, 2]) * log(1 - pi[i,c2]);",
@@ -342,7 +342,7 @@ create_stan_tdcm <- function(q_matrix) {
                "    matrix[C, C] prob_joint;",
                "    for (c1 in 1:C) {{",
                "      for (c2 in 1:C) {{",
-               "        real log_items[l[j, 1]];",
+               "        array[l[j, 1]] real log_items;",
                "        for (m in 1:l[j, 1]) {{",
                "          int i = ii[s[j, 1] + m - 1, 1];",
                "          log_items[m] = y[s[j, 1] + m - 1, 1] * log(pi[i,c1]) + (1 - y[s[j, 1] + m - 1, 1]) * log(1 - pi[i,c1]) + y[s[j, 1] + m - 1, 2] * log(pi[i,c2]) + (1 - y[s[j, 1] + m - 1, 2]) * log(1 - pi[i,c2]);",

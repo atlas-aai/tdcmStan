@@ -11,22 +11,22 @@ functions {
     return x;
   }
 
-  vector sum_probs(vector beta, vector theta, real[] xr, int[] xi) {
+  vector sum_probs(vector beta, vector theta, array[] real xr, array[] int xi) {
     int Z = num_elements(xi);
     int ys = xi[Z - 1];
     int iis = xi[Z];
 
-    int y1[iis] = xi[1:iis];
-    int ii1[iis] = xi[(iis + 1):(2 * iis)];
-    int jj1[iis] = xi[((2 * iis) + 1):(3 * iis)];
-    int s1[ys] = xi[((3 * iis) + 1):((3 * iis) + ys)];
-    int l1[ys] = xi[((3 * iis) + ys + 1):((3 * iis) + (2 * ys))];
+    array[iis] int y1 = xi[1:iis];
+    array[iis] int ii1 = xi[(iis + 1):(2 * iis)];
+    array[iis] int jj1 = xi[((2 * iis) + 1):(3 * iis)];
+    array[ys] int s1 = xi[((3 * iis) + 1):((3 * iis) + ys)];
+    array[ys] int l1 = xi[((3 * iis) + ys + 1):((3 * iis) + (2 * ys))];
 
-    int y2[iis] = xi[((3 * iis) + (2 * ys) + 1):((4 * iis) + (2 * ys))];
-    int ii2[iis] = xi[((4 * iis) + (2 * ys) + 1):((5 * iis) + (2 * ys))];
-    int jj2[iis] = xi[((5 * iis) + (2 * ys) + 1):((6 * iis) + (2 * ys))];
-    int s2[ys] = xi[((6 * iis) + (2 * ys) + 1):((6 * iis) + (3 * ys))];
-    int l2[ys] = xi[((6 * iis) + (3 * ys) + 1):((6 * iis) + (4 * ys))];
+    array[iis] int y2 = xi[((3 * iis) + (2 * ys) + 1):((4 * iis) + (2 * ys))];
+    array[iis] int ii2 = xi[((4 * iis) + (2 * ys) + 1):((5 * iis) + (2 * ys))];
+    array[iis] int jj2 = xi[((5 * iis) + (2 * ys) + 1):((6 * iis) + (2 * ys))];
+    array[ys] int s2 = xi[((6 * iis) + (2 * ys) + 1):((6 * iis) + (3 * ys))];
+    array[ys] int l2 = xi[((6 * iis) + (3 * ys) + 1):((6 * iis) + (4 * ys))];
 
     int I = xi[Z - 7];
     int N = xi[Z - 6];
@@ -63,7 +63,7 @@ functions {
       vector[C] tmp;
       for (c1 in 1:C) {
         for (c2 in 1:C) {
-          real log_items[l1[j]];
+          array[l1[j]] real log_items;
           for (m in 1:l1[j]) {
             int i = ii1[s1[j] + m - 1];
             log_items[m] = y1[s1[j] + m - 1] * log(pi_c[i,c1]) + (1 - y1[s1[j] + m - 1]) * log(1 - pi_c[i,c1]) + y2[s1[j] + m - 1] * log(pi_c[i,c2]) + (1 - y2[s1[j] + m - 1]) * log(1 - pi_c[i,c2]);
@@ -78,22 +78,22 @@ functions {
     return [person]';
   }
 
-  vector person_loglik(vector beta, vector theta, real[] xr, int[] xi) {
+  vector person_loglik(vector beta, vector theta, array[] real xr, array[] int xi) {
     int Z = num_elements(xi);
     int ys = xi[Z - 1];
     int iis = xi[Z];
 
-    int y1[iis] = xi[1:iis];
-    int ii1[iis] = xi[(iis + 1):(2 * iis)];
-    int jj1[iis] = xi[((2 * iis) + 1):(3 * iis)];
-    int s1[ys] = xi[((3 * iis) + 1):((3 * iis) + ys)];
-    int l1[ys] = xi[((3 * iis) + ys + 1):((3 * iis) + (2 * ys))];
+    array[iis] int y1 = xi[1:iis];
+    array[iis] int ii1 = xi[(iis + 1):(2 * iis)];
+    array[iis] int jj1 = xi[((2 * iis) + 1):(3 * iis)];
+    array[ys] int s1 = xi[((3 * iis) + 1):((3 * iis) + ys)];
+    array[ys] int l1 = xi[((3 * iis) + ys + 1):((3 * iis) + (2 * ys))];
 
-    int y2[iis] = xi[((3 * iis) + (2 * ys) + 1):((4 * iis) + (2 * ys))];
-    int ii2[iis] = xi[((4 * iis) + (2 * ys) + 1):((5 * iis) + (2 * ys))];
-    int jj2[iis] = xi[((5 * iis) + (2 * ys) + 1):((6 * iis) + (2 * ys))];
-    int s2[ys] = xi[((6 * iis) + (2 * ys) + 1):((6 * iis) + (3 * ys))];
-    int l2[ys] = xi[((6 * iis) + (3 * ys) + 1):((6 * iis) + (4 * ys))];
+    array[iis] int y2 = xi[((3 * iis) + (2 * ys) + 1):((4 * iis) + (2 * ys))];
+    array[iis] int ii2 = xi[((4 * iis) + (2 * ys) + 1):((5 * iis) + (2 * ys))];
+    array[iis] int jj2 = xi[((5 * iis) + (2 * ys) + 1):((6 * iis) + (2 * ys))];
+    array[ys] int s2 = xi[((6 * iis) + (2 * ys) + 1):((6 * iis) + (3 * ys))];
+    array[ys] int l2 = xi[((6 * iis) + (3 * ys) + 1):((6 * iis) + (4 * ys))];
 
     int I = xi[Z - 7];
     int N = xi[Z - 6];
@@ -130,7 +130,7 @@ functions {
       vector[C] tmp;
       for (c1 in 1:C) {
         for (c2 in 1:C) {
-          real log_items[l1[j]];
+          array[l1[j]] real log_items;
           for (m in 1:l1[j]) {
             int i = ii1[s1[j] + m - 1];
             log_items[m] = y1[s1[j] + m - 1] * log(pi_c[i,c1]) + (1 - y1[s1[j] + m - 1]) * log(1 - pi_c[i,c1]) + y2[s1[j] + m - 1] * log(pi_c[i,c2]) + (1 - y2[s1[j] + m - 1]) * log(1 - pi_c[i,c2]);
@@ -145,22 +145,22 @@ functions {
     return person;
   }
 
-  vector resp_transition(vector beta, vector theta, real[] xr, int[] xi) {
+  vector resp_transition(vector beta, vector theta, array[] real xr, array[] int xi) {
     int Z = num_elements(xi);
     int ys = xi[Z - 1];
     int iis = xi[Z];
 
-    int y1[iis] = xi[1:iis];
-    int ii1[iis] = xi[(iis + 1):(2 * iis)];
-    int jj1[iis] = xi[((2 * iis) + 1):(3 * iis)];
-    int s1[ys] = xi[((3 * iis) + 1):((3 * iis) + ys)];
-    int l1[ys] = xi[((3 * iis) + ys + 1):((3 * iis) + (2 * ys))];
+    array[iis] int y1 = xi[1:iis];
+    array[iis] int ii1 = xi[(iis + 1):(2 * iis)];
+    array[iis] int jj1 = xi[((2 * iis) + 1):(3 * iis)];
+    array[ys] int s1 = xi[((3 * iis) + 1):((3 * iis) + ys)];
+    array[ys] int l1 = xi[((3 * iis) + ys + 1):((3 * iis) + (2 * ys))];
 
-    int y2[iis] = xi[((3 * iis) + (2 * ys) + 1):((4 * iis) + (2 * ys))];
-    int ii2[iis] = xi[((4 * iis) + (2 * ys) + 1):((5 * iis) + (2 * ys))];
-    int jj2[iis] = xi[((5 * iis) + (2 * ys) + 1):((6 * iis) + (2 * ys))];
-    int s2[ys] = xi[((6 * iis) + (2 * ys) + 1):((6 * iis) + (3 * ys))];
-    int l2[ys] = xi[((6 * iis) + (3 * ys) + 1):((6 * iis) + (4 * ys))];
+    array[iis] int y2 = xi[((3 * iis) + (2 * ys) + 1):((4 * iis) + (2 * ys))];
+    array[iis] int ii2 = xi[((4 * iis) + (2 * ys) + 1):((5 * iis) + (2 * ys))];
+    array[iis] int jj2 = xi[((5 * iis) + (2 * ys) + 1):((6 * iis) + (2 * ys))];
+    array[ys] int s2 = xi[((6 * iis) + (2 * ys) + 1):((6 * iis) + (3 * ys))];
+    array[ys] int l2 = xi[((6 * iis) + (3 * ys) + 1):((6 * iis) + (4 * ys))];
 
     int I = xi[Z - 7];
     int N = xi[Z - 6];
@@ -175,7 +175,7 @@ functions {
 
     matrix[C, C] ps;
     matrix[C, C] tau_c;
-    matrix[C, C] prob_transition_class[J];
+    array[J] matrix[C, C] prob_transition_class;
 
     vector[J * C * C] person;
 
@@ -200,7 +200,7 @@ functions {
       matrix[C, C] prob_joint;
       for (c1 in 1:C) {
         for (c2 in 1:C) {
-          real log_items[l1[j]];
+          array[l1[j]] real log_items;
           for (m in 1:l1[j]) {
             int i = ii1[s1[j] + m - 1];
             log_items[m] = y1[s1[j] + m - 1] * log(pi_c[i,c1]) + (1 - y1[s1[j] + m - 1]) * log(1 - pi_c[i,c1]) + y2[s1[j] + m - 1] * log(pi_c[i,c2]) + (1 - y2[s1[j] + m - 1]) * log(1 - pi_c[i,c2]);
@@ -220,18 +220,18 @@ functions {
   }
 }
 data {
-  int<lower=1> I;                    // number of items
-  int<lower=1> J;                    // number of respondents
-  int<lower=1> N;                    // number of observations
-  int<lower=1> C;                    // number of classes
-  int<lower=1> A;                    // number of attributes
-  int<lower=1,upper=I> ii[N, 2];     // item for obs n
-  int<lower=1,upper=J> jj[N, 2];     // respondent for obs n
-  int<lower=0,upper=1> y[N, 2];      // score for obs n
-  int<lower=1,upper=N> s[J, 2];      // starting row for j
-  int<lower=1,upper=I> l[J, 2];      // number of items for j
-  matrix[C,A] Alpha;                 // attribute pattern for each C
-  int<lower=1> n_shards;             // the number of shards to split the data into
+  int<lower=1> I;                       // number of items
+  int<lower=1> J;                       // number of respondents
+  int<lower=1> N;                       // number of observations
+  int<lower=1> C;                       // number of classes
+  int<lower=1> A;                       // number of attributes
+  array[N, 2] int<lower=1,upper=I> ii;  // item for obs n
+  array[N, 2] int<lower=1,upper=J> jj;  // respondent for obs n
+  array[N, 2] int<lower=0,upper=1> y;   // score for obs n
+  array[J, 2] int<lower=1,upper=N> s;   // starting row for j
+  array[J, 2] int<lower=1,upper=I> l;   // number of items for j
+  matrix[C,A] Alpha;                    // attribute pattern for each C
+  int<lower=1> n_shards;                // the number of shards to split the data into
 }
 transformed data {
   int ys = num_elements(s) / 2 / n_shards;
@@ -239,12 +239,12 @@ transformed data {
 
   int M = iis;
 
-  int xi[n_shards, (4 * ys) + (6 * iis) + 8];
+  array[n_shards, (4 * ys) + (6 * iis) + 8] int xi;
 
   // an empty set of per-shard parameters
-  vector[0] theta[n_shards];
+  array[n_shards] vector[0] theta;
 
-  real xr[n_shards,1];
+  array[n_shards,1] real xr;
   for(kk in 1:n_shards) {
     xr[kk, 1] = 1.0;
   }
@@ -282,7 +282,7 @@ transformed data {
   }
 }
 parameters {
-  simplex[C] tau[C];
+  array[C] simplex[C] tau;
   simplex[C] Vc;
   real l1_0;
   real l2_0;
@@ -529,7 +529,7 @@ transformed parameters {
   pi[23,8] = inv_logit(l23_0+l23_13);
   pi[24,8] = inv_logit(l24_0+l24_13);
 
-  real pic[I * C];
+  array[I * C] real pic;
   for(c in 1:C) {
     for(i in 1:I) {
       int ic = i + ((c - 1) * I);
@@ -537,7 +537,7 @@ transformed parameters {
     }
   }
 
-  real tauc[C * C];
+  array[C * C] real tauc;
   for(c1 in 1:C) {
     for(c2 in 1:C) {
       int cc = c2 + ((c1 - 1) * C);
@@ -552,7 +552,7 @@ transformed parameters {
   beta[(C + (I * C) + 1):(C + (I * C) + (C * C))] = to_vector(tauc[1:(C * C)]);
 }
 model {
-  real ps[C, C];
+  array[C, C] real ps;
 
   // Priors
   l1_0 ~ normal(0, 2);
@@ -608,9 +608,9 @@ model {
 }
 generated quantities {
   vector[J] log_lik;
-  matrix[C, C] format_prob_transition_class[J];
+  array[J] matrix[C, C] format_prob_transition_class;
   vector[J*C*C] prob_transition_class;
-  matrix[A, 2] prob_resp_attr[J];
+  array[J] matrix[A, 2] prob_resp_attr;
 
   log_lik = map_rect(person_loglik, beta, theta, xr, xi);
 
