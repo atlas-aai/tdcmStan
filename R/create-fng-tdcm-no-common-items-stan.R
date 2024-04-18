@@ -10,7 +10,8 @@
 #' @export
 #'
 #' @examples
-#' qmatrix = tibble::tibble(att_1 = c(1, 0, 1, 0, 1, 1), att_2 = c(0, 1, 0, 1, 1, 1))
+#' qmatrix = tibble::tibble(att_1 = c(1, 0, 1, 0, 1, 1),
+#'                          att_2 = c(0, 1, 0, 1, 1, 1))
 #' create_fng_no_common_items_stan_tdcm(q_matrix = qmatrix)
 create_fng_no_common_items_stan_tdcm <- function(q_matrix) {
   profs <- bin_profile(ncol(q_matrix))
@@ -186,7 +187,7 @@ create_fng_no_common_items_stan_tdcm <- function(q_matrix) {
                        dplyr::rename(int2 = .data$param),
                      by = c("profile", "item_id")) %>%
     tidyr::unite(col = "param", c(-.data$profile, -.data$item_id), sep = "+",
-                 na.rm = T) %>%
+                 na.rm = TRUE) %>%
     dplyr::mutate(stan_pi = as.character(glue::glue("pi[{item_id},{profile}] = inv_logit({param});")))
   stan_data <- glue::glue("data {{",
                           "  int<lower=1> I;                       // number of items",

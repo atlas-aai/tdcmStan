@@ -38,7 +38,8 @@ bin_profile <- function(natt) {
 #' @export
 #'
 #' @examples
-#' shard_calculator(num_respondents = 1000, num_responses = 5000, num_chains = 4)
+#' shard_calculator(num_respondents = 1000, num_responses = 5000,
+#'                  num_chains = 4)
 shard_calculator <- function(num_respondents, num_responses, num_chains) {
   max_shards <- parallel::detectCores() - 1
 
@@ -55,7 +56,7 @@ shard_calculator <- function(num_respondents, num_responses, num_chains) {
 
   possible_parallel_chains <- floor(parallel::detectCores() / possible_shards)
 
-  for(kk in 1:length(possible_parallel_chains)) {
+  for(kk in seq_len(length(possible_parallel_chains))) {
     if(possible_parallel_chains[kk] >= parallel::detectCores()) {
       possible_parallel_chains[kk] <- parallel::detectCores() - 1
     }
@@ -68,12 +69,12 @@ shard_calculator <- function(num_respondents, num_responses, num_chains) {
   optimal_config <- tibble::tibble(parallel_chains = possible_parallel_chains,
                                    threads_per_chain = possible_shards) %>%
     dplyr::mutate(total_cores = .data$parallel_chains * .data$threads_per_chain,
-                  parallel_chains = dplyr::case_when(.data$total_cores >=
-                                                       parallel::detectCores() ~
-                                                       floor((parallel::detectCores() -
-                                                                1) /
-                                                               .data$threads_per_chain),
-                                                     T ~ .data$parallel_chains),
+                  parallel_chains =
+                    dplyr::case_when(.data$total_cores >=
+                                       parallel::detectCores() ~
+                                       floor((parallel::detectCores() - 1) /
+                                               .data$threads_per_chain),
+                                     TRUE ~ .data$parallel_chains),
                   total_cores = .data$parallel_chains *
                     .data$threads_per_chain) %>%
     dplyr::group_by(.data$parallel_chains) %>%
