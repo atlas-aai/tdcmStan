@@ -108,7 +108,7 @@ create_fng_no_common_items_stan_tdcm <- function(q_matrix) {
                          dplyr::mutate(att = stringr::str_replace(.data$att,
                                                                   "att_",
                                                                   "mastered_")),
-                       by = "profile") %>%
+                       by = "profile", relationship = "many-to-many") %>%
       dplyr::filter(!is.na(.data$att)) %>%
       dplyr::mutate(mastered_att =
                       as.numeric(stringr::str_remove(.data$att,
@@ -123,7 +123,7 @@ create_fng_no_common_items_stan_tdcm <- function(q_matrix) {
                                          as.numeric(stringr::str_remove(.data$att,
                                                                         "att_"))) %>%
                          dplyr::select(-"att"),
-                       by = "item_id") %>%
+                       by = "item_id", relationship = "many-to-many") %>%
       dplyr::filter(.data$mastered_att == .data$measured_att) %>%
       dplyr::mutate(master = as.numeric(.data$mastered >=
                                           .data$measured)) %>%
@@ -164,13 +164,13 @@ create_fng_no_common_items_stan_tdcm <- function(q_matrix) {
                        tidyr::pivot_longer(cols = c(-.data$profile),
                                            names_to = "att_mastered",
                                            values_to = "mastered"),
-                     by = "profile") %>%
+                     by = "profile", relationship = "many-to-many") %>%
     dplyr::left_join(q_matrix %>%
                        tibble::rowid_to_column("item_id") %>%
                        tidyr::pivot_longer(cols = c(-.data$item_id),
                                            names_to = "att_measured",
                                            values_to = "measured"),
-                     by = "item_id") %>%
+                     by = "item_id", relationship = "many-to-many") %>%
     dplyr::filter(.data$att_mastered == .data$att_measured) %>%
     dplyr::mutate(int0 = glue::glue("l_0"), need_param = .data$mastered *
                     .data$measured,
@@ -185,7 +185,8 @@ create_fng_no_common_items_stan_tdcm <- function(q_matrix) {
     tidyr::pivot_wider(names_from = "att_mastered", values_from = "mef") %>%
     dplyr::left_join(profile_item_interactions %>%
                        dplyr::rename(int2 = .data$param),
-                     by = c("profile", "item_id")) %>%
+                     by = c("profile", "item_id"),
+                     relationship = "many-to-many") %>%
     tidyr::unite(col = "param", c(-.data$profile, -.data$item_id), sep = "+",
                  na.rm = TRUE) %>%
     dplyr::mutate(stan_pi = as.character(glue::glue("pi[{item_id},{profile}] = inv_logit({param});")))

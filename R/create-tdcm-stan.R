@@ -27,7 +27,7 @@ create_stan_tdcm <- function(q_matrix) {
     dplyr::mutate(attr = as.numeric(stringr::str_remove(.data$attr,
                                                         "att_"))) %>%
     dplyr::filter(.data$meas == 1) %>%
-    dplyr::select(-.data$meas) %>%
+    dplyr::select(-"meas") %>%
     dplyr::mutate(param = glue::glue("real<lower=0> l{item_id}_1{attr};")) %>%
     dplyr::pull(.data$param)
   mef_priors <- q_matrix %>%
@@ -37,7 +37,7 @@ create_stan_tdcm <- function(q_matrix) {
     dplyr::mutate(attr = as.numeric(stringr::str_remove(.data$attr,
                                                         "att_"))) %>%
     dplyr::filter(.data$meas == 1) %>%
-    dplyr::select(-.data$meas) %>%
+    dplyr::select(-"meas") %>%
     dplyr::mutate(param =
                     glue::glue("l{item_id}_1{attr} ~ lognormal(0, 1);")) %>%
     dplyr::pull(.data$param)
@@ -67,14 +67,14 @@ create_stan_tdcm <- function(q_matrix) {
       dplyr::ungroup() %>%
       dplyr::mutate(attr = as.numeric(stringr::str_remove(.data$attr,
                                                           "att_"))) %>%
-      dplyr::select(-.data$meas) %>%
+      dplyr::select(-"meas") %>%
       tidyr::pivot_wider(names_from = "att_num", values_from = "attr") %>%
       dplyr::mutate(param =
                       glue::glue("real<lower=-1 * fmin(l{item_id}_1{att1}, l{item_id}_1{att2})> l{item_id}_2{att1}{att2};")) %>%
       dplyr::pull(.data$param)
     int2_priors <- multi_att_items %>%
       dplyr::filter(.data$total == 2) %>%
-      dplyr::select(-.data$total) %>%
+      dplyr::select(-"total") %>%
       tidyr::pivot_longer(cols = c(-.data$item_id), names_to = "attr",
                           values_to = "meas") %>%
       dplyr::filter(.data$meas == 1) %>%
@@ -85,7 +85,7 @@ create_stan_tdcm <- function(q_matrix) {
       dplyr::ungroup() %>%
       dplyr::mutate(attr = as.numeric(stringr::str_remove(.data$attr,
                                                           "att_"))) %>%
-      dplyr::select(-.data$meas) %>%
+      dplyr::select(-"meas") %>%
       tidyr::pivot_wider(names_from = "att_num", values_from = "attr") %>%
       dplyr::mutate(param =
                       glue::glue("l{item_id}_2{att1}{att2} ~ normal(0, 2);")) %>%
@@ -98,7 +98,7 @@ create_stan_tdcm <- function(q_matrix) {
                     sum(dplyr::c_across(where(is.numeric)))) %>%
     tibble::rowid_to_column("item_id") %>%
     dplyr::filter(.data$total == 2) %>%
-    dplyr::select(-.data$total)
+    dplyr::select(-"total")
 
   if (nrow(multi_item_q_matrix) > 0) {
     items_with_interactions <- multi_item_q_matrix %>%
@@ -112,11 +112,11 @@ create_stan_tdcm <- function(q_matrix) {
                     att_row = stringr::str_c("att_",
                                              as.character(.data$att_row))) %>%
       dplyr::ungroup() %>%
-      dplyr::select(-.data$att, -.data$meas) %>%
+      dplyr::select(-"att", -"meas") %>%
       tidyr::pivot_wider(names_from = "att_row", values_from = "meas_att") %>%
       dplyr::mutate(param =
                       as.character(glue::glue("l{item_id}_2{att_1}{att_2}"))) %>%
-      dplyr::select(.data$item_id, .data$param)
+      dplyr::select("item_id", "param")
 
     profile_item_interactions <- tibble::tibble(profile =
                                                   rep(1:(2^ncol(q_matrix)),
@@ -129,19 +129,19 @@ create_stan_tdcm <- function(q_matrix) {
                          dplyr::mutate(total = sum(dplyr::c_across(where(is.numeric)))) %>%
                          tibble::rowid_to_column("profile") %>%
                          dplyr::filter(.data$total > 1) %>%
-                         dplyr::select(-.data$total) %>%
+                         dplyr::select(-"total") %>%
                          tidyr::pivot_longer(cols = c(-.data$profile),
                                              names_to = "att",
                                              values_to = "mastered") %>%
                          dplyr::mutate(att =
                                          stringr::str_replace(.data$att, "att_",
                                                               "mastered_")),
-                       by = "profile") %>%
+                       by = "profile", relationship = "many-to-many") %>%
       dplyr::filter(!is.na(.data$att)) %>%
       dplyr::mutate(mastered_att =
                       as.numeric(stringr::str_remove(.data$att,
                                                      "mastered_"))) %>%
-      dplyr::select(-.data$att) %>%
+      dplyr::select(-"att") %>%
       dplyr::left_join(q_matrix %>%
                          tibble::rowid_to_column("item_id") %>%
                          tidyr::pivot_longer(cols = c(-.data$item_id),
@@ -149,14 +149,14 @@ create_stan_tdcm <- function(q_matrix) {
                                              values_to = "measured") %>%
                          dplyr::mutate(measured_att =
                                          as.numeric(stringr::str_remove(.data$att, "att_"))) %>%
-                         dplyr::select(-.data$att),
-                       by = "item_id") %>%
+                         dplyr::select(-"att"),
+                       by = "item_id", relationship = "many-to-many") %>%
       dplyr::filter(.data$mastered_att == .data$measured_att) %>%
       dplyr::mutate(master = as.numeric(.data$mastered >= .data$measured)) %>%
       dplyr::group_by(.data$profile, .data$item_id) %>%
       dplyr::mutate(master = mean(.data$master)) %>%
       dplyr::ungroup() %>%
-      dplyr::select(-.data$mastered, -.data$mastered_att) %>%
+      dplyr::select(-"mastered", -"mastered_att") %>%
       dplyr::mutate(measured = .data$measured * .data$measured_att,
                     measured_att =
                       stringr::str_c("att_",
@@ -166,12 +166,12 @@ create_stan_tdcm <- function(q_matrix) {
       dplyr::mutate(meas = stringr::str_c("att_",
                                           as.character(dplyr::row_number()))) %>%
       dplyr::ungroup() %>%
-      dplyr::select(-.data$measured_att) %>%
+      dplyr::select(-"measured_att") %>%
       tidyr::pivot_wider(names_from = "meas", values_from = "measured") %>%
       dplyr::mutate(param = dplyr::case_when(.data$master < 1 ~ NA_character_,
                                              .data$master == 1 ~
                                                as.character(glue::glue("l{item_id}_2{att_1}{att_2}")))) %>%
-      dplyr::select(.data$profile, .data$item_id, .data$param)
+      dplyr::select("profile", "item_id", "param")
   } else {
     profile_item_interactions <- tibble::tibble(profile =
                                                   rep(1:(2^ncol(q_matrix)),
@@ -179,7 +179,7 @@ create_stan_tdcm <- function(q_matrix) {
                                                 item_id =
                                                   rep(seq_len(nrow(q_matrix)),
                                                       times =
-                                                        (2^ncol(q_matrix)))) %>%
+                                                      (2^ncol(q_matrix)))) %>%
       dplyr::mutate(param = NA_character_)
   }
 
@@ -192,13 +192,13 @@ create_stan_tdcm <- function(q_matrix) {
                        tidyr::pivot_longer(cols = c(-.data$profile),
                                            names_to = "att_mastered",
                                            values_to = "mastered"),
-                     by = "profile") %>%
+                     by = "profile", relationship = "many-to-many") %>%
     dplyr::left_join(q_matrix %>%
                        tibble::rowid_to_column("item_id") %>%
                        tidyr::pivot_longer(cols = c(-.data$item_id),
                                            names_to = "att_measured",
                                            values_to = "measured"),
-                     by = "item_id") %>%
+                     by = "item_id", relationship = "many-to-many") %>%
     dplyr::filter(.data$att_mastered == .data$att_measured) %>%
     dplyr::mutate(int0 = glue::glue("l{item_id}_0"),
                   need_param = .data$mastered * .data$measured,
@@ -207,12 +207,13 @@ create_stan_tdcm <- function(q_matrix) {
                   mef = dplyr::case_when(.data$need_param == 0 ~ NA_character_,
                                          .data$need_param > 0 ~
                                            as.character(glue::glue("l{item_id}_1{attribute}")))) %>%
-    dplyr::select(-.data$att_measured, -.data$attribute, -.data$measured,
-                  -.data$mastered, -.data$need_param) %>%
+    dplyr::select(-"att_measured", -"attribute", -"measured",
+                  -"mastered", -"need_param") %>%
     tidyr::pivot_wider(names_from = "att_mastered", values_from = "mef") %>%
     dplyr::left_join(profile_item_interactions %>%
                        dplyr::rename(int2 = .data$param),
-                     by = c("profile", "item_id")) %>%
+                     by = c("profile", "item_id"),
+                     relationship = "many-to-many") %>%
     tidyr::unite(col = "param", c(-.data$profile, -.data$item_id), sep = "+",
                  na.rm = TRUE) %>%
     dplyr::mutate(stan_pi =
