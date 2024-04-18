@@ -47,8 +47,8 @@ shard_calculator <- function(num_respondents, num_responses, num_chains) {
   possible_shards[1] <- 1
   kk <- 2
 
-  for(jj in 2:max_shards) {
-    if(num_respondents %% jj == 0 & num_responses %% jj == 0) {
+  for (jj in 2:max_shards) {
+    if (num_respondents %% jj == 0 && num_responses %% jj == 0) {
       possible_shards[kk] <- jj
       kk <- kk + 1
     }
@@ -56,12 +56,12 @@ shard_calculator <- function(num_respondents, num_responses, num_chains) {
 
   possible_parallel_chains <- floor(parallel::detectCores() / possible_shards)
 
-  for(kk in seq_len(length(possible_parallel_chains))) {
-    if(possible_parallel_chains[kk] >= parallel::detectCores()) {
+  for (kk in seq_len(length(possible_parallel_chains))) {
+    if (possible_parallel_chains[kk] >= parallel::detectCores()) {
       possible_parallel_chains[kk] <- parallel::detectCores() - 1
     }
 
-    if(possible_parallel_chains[kk] > num_chains) {
+    if (possible_parallel_chains[kk] > num_chains) {
       possible_parallel_chains[kk] <- num_chains
     }
   }
@@ -76,7 +76,7 @@ shard_calculator <- function(num_respondents, num_responses, num_chains) {
                                                .data$threads_per_chain),
                                      TRUE ~ .data$parallel_chains),
                   total_cores = .data$parallel_chains *
-                    .data$threads_per_chain) %>%
+                  .data$threads_per_chain) %>%
     dplyr::group_by(.data$parallel_chains) %>%
     dplyr::filter(.data$threads_per_chain == max(.data$threads_per_chain)) %>%
     dplyr::ungroup() %>%
