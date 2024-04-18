@@ -26,7 +26,7 @@ create_threaded_stan_tdcm <- function(q_matrix) {
     dplyr::mutate(attr = as.numeric(stringr::str_remove(.data$attr,
                                                         "att_"))) %>%
     dplyr::filter(.data$meas == 1) %>%
-    dplyr::select(-.data$meas) %>%
+    dplyr::select(-"meas") %>%
     dplyr::mutate(param = glue::glue("real<lower=0> l{item_id}_1{attr};")) %>%
     dplyr::pull(.data$param)
   mef_priors <- q_matrix %>%
@@ -73,7 +73,7 @@ create_threaded_stan_tdcm <- function(q_matrix) {
       dplyr::filter(.data$total == 2) %>%
       dplyr::select(-.data$total) %>%
       tidyr::pivot_longer(cols = c(-.data$item_id), names_to = "attr",
-                                   values_to = "meas") %>%
+                          values_to = "meas") %>%
       dplyr::filter(.data$meas == 1) %>%
       dplyr::group_by(.data$item_id) %>%
       dplyr::mutate(att_num = dplyr::row_number(),
@@ -210,7 +210,7 @@ create_threaded_stan_tdcm <- function(q_matrix) {
     tidyr::unite(col = "param", c(-.data$profile, -.data$item_id), sep = "+",
                  na.rm = TRUE) %>%
     dplyr::mutate(stan_pi =
-             as.character(glue::glue("pi[{item_id},{profile}] = inv_logit({param});")))
+                    as.character(glue::glue("pi[{item_id},{profile}] = inv_logit({param});")))
 
   stan_functions <-
     glue::glue("functions {{",

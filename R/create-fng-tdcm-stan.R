@@ -118,8 +118,8 @@ create_fng_stan_tdcm <- function(q_matrix) {
                        by = "profile") %>%
       dplyr::filter(!is.na(.data$att)) %>%
       dplyr::mutate(mastered_att =
-                      as.numeric(stringr::str_remove(.data$att,
-                                                     "mastered_"))) %>%
+                    as.numeric(stringr::str_remove(.data$att,
+                                                   "mastered_"))) %>%
       dplyr::select(-.data$att) %>%
       dplyr::left_join(q_matrix %>%
                          tibble::rowid_to_column("item_id") %>%
@@ -138,13 +138,14 @@ create_fng_stan_tdcm <- function(q_matrix) {
       dplyr::ungroup() %>%
       dplyr::select(-.data$mastered, -.data$mastered_att) %>%
       dplyr::mutate(measured = .data$measured * .data$measured_att,
-             measured_att =
-               stringr::str_c("att_", as.character(.data$measured_att))) %>%
+                    measured_att =
+                      stringr::str_c("att_",
+                                     as.character(.data$measured_att))) %>%
       dplyr::filter(.data$measured != 0) %>%
       dplyr::group_by(.data$profile, .data$item_id) %>%
       dplyr::mutate(meas =
-                      stringr::str_c("att_",
-                                     as.character(dplyr::row_number()))) %>%
+                    stringr::str_c("att_",
+                                   as.character(dplyr::row_number()))) %>%
       dplyr::ungroup() %>%
       dplyr::select(-.data$measured_att) %>%
       tidyr::pivot_wider(names_from = "meas", values_from = "measured") %>%
@@ -194,7 +195,7 @@ create_fng_stan_tdcm <- function(q_matrix) {
     tidyr::unite(col = "param", c(-.data$profile, -.data$item_id), sep = "+",
                  na.rm = TRUE) %>%
     dplyr::mutate(stan_pi =
-             as.character(glue::glue("pi[{item_id},{profile}] = inv_logit({param});")))
+                    as.character(glue::glue("pi[{item_id},{profile}] = inv_logit({param});")))
 
   stan_data <-
     glue::glue("data {{",
