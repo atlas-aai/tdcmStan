@@ -192,7 +192,7 @@ create_fng_stan_tdcm <- function(q_matrix) {
                        dplyr::rename(int2 = .data$param),
                      by = c("profile", "item_id")) %>%
     tidyr::unite(col = "param", c(-.data$profile, -.data$item_id), sep = "+",
-                 na.rm = T) %>%
+                 na.rm = TRUE) %>%
     dplyr::mutate(stan_pi =
              as.character(glue::glue("pi[{item_id},{profile}] = inv_logit({param});")))
 
