@@ -49,8 +49,11 @@ create_fng_no_common_items_stan_tdcm <- function(q_matrix) {
                                                           "att_"))) %>%
       dplyr::select(-"meas") %>%
       tidyr::pivot_wider(names_from = "att_num", values_from = "attr") %>%
-      dplyr::mutate(param = glue::glue("real<lower=-1 * fmin(l{item_id}_1{att1}, l{item_id}_1{att2})> l{item_id}_2{att1}{att2};")) %>%
-      dplyr::pull(.data$param)
+      dplyr::mutate(param = glue::glue("real<lower=-1 * ",
+                                       "fmin(l{item_id}_1{att1}, ",
+                                       "l{item_id}_1{att2})> ",
+                                       "l{item_id}_2{att1}{att2};")) %>%
+      dplyr::pull("param")
     int2_priors <- multi_att_items %>%
       dplyr::filter(.data$total == 2) %>%
       dplyr::select(-"total") %>%
@@ -66,8 +69,9 @@ create_fng_no_common_items_stan_tdcm <- function(q_matrix) {
                                                           "att_"))) %>%
       dplyr::select(-"meas") %>%
       tidyr::pivot_wider(names_from = "att_num", values_from = "attr") %>%
-      dplyr::mutate(param = glue::glue("l{item_id}_2{att1}{att2} ~ normal(0, 2);")) %>%
-      dplyr::pull(.data$param)
+      dplyr::mutate(param = glue::glue("l{item_id}_2{att1}{att2} ~ ",
+                                       "normal(0, 2);")) %>%
+      dplyr::pull("param")
   }
   multi_item_q_matrix <- q_matrix %>%
     dplyr::rowwise() %>%
@@ -89,16 +93,22 @@ create_fng_no_common_items_stan_tdcm <- function(q_matrix) {
       dplyr::ungroup() %>%
       dplyr::select(-"att", -"meas") %>%
       tidyr::pivot_wider(names_from = "att_row", values_from = "meas_att") %>%
-      dplyr::mutate(param = as.character(glue::glue("l{item_id}_2{att_1}{att_2}"))) %>%
+      dplyr::mutate(param = as.character(glue::glue("l{item_id}_2",
+                                                    "{att_1}{att_2}"))) %>%
       dplyr::select("item_id", "param")
-    profile_item_interactions <- tibble::tibble(profile = rep(1:(2^ncol(q_matrix)),
-                                                              each = nrow(q_matrix)),
-                                                item_id = rep(seq_len(nrow(q_matrix)),
-                                                              times = (2^ncol(q_matrix)))) %>%
+    profile_item_interactions <- tibble::tibble(profile =
+                                                  rep(1:(2^ncol(q_matrix)),
+                                                      each = nrow(q_matrix)),
+                                                item_id =
+                                                  rep(seq_len(nrow(q_matrix)),
+                                                      times =
+                                                        (2^ncol(q_matrix)))) %>%
       dplyr::filter(.data$item_id %in% items_with_interactions$item_id) %>%
       dplyr::left_join(profs %>%
                          dplyr::rowwise() %>%
-                         dplyr::mutate(total = sum(dplyr::c_across(where(is.numeric)))) %>%
+                         dplyr::mutate(total =
+                                         sum(dplyr::c_across(
+                                           where(is.numeric)))) %>%
                          tibble::rowid_to_column("profile") %>%
                          dplyr::filter(.data$total > 1) %>%
                          dplyr::select(-"total") %>%
@@ -120,8 +130,9 @@ create_fng_no_common_items_stan_tdcm <- function(q_matrix) {
                                              names_to = "att",
                                              values_to = "measured") %>%
                          dplyr::mutate(measured_att =
-                                         as.numeric(stringr::str_remove(.data$att,
-                                                                        "att_"))) %>%
+                                         as.numeric(
+                                           stringr::str_remove(.data$att,
+                                                               "att_"))) %>%
                          dplyr::select(-"att"),
                        by = "item_id", relationship = "many-to-many") %>%
       dplyr::filter(.data$mastered_att == .data$measured_att) %>%
@@ -143,16 +154,21 @@ create_fng_no_common_items_stan_tdcm <- function(q_matrix) {
       dplyr::ungroup() %>%
       dplyr::select(-"measured_att") %>%
       tidyr::pivot_wider(names_from = "meas", values_from = "measured") %>%
-      dplyr::mutate(param = dplyr::case_when(.data$master <
-                                               1 ~ NA_character_,
-                                             .data$master == 1 ~
-                                               as.character(glue::glue("l{item_id}_2{att_1}{att_2}")))) %>%
+      dplyr::mutate(param =
+                      dplyr::case_when(
+                        .data$master < 1 ~ NA_character_,
+                        .data$master == 1 ~
+                          as.character(glue::glue("l{item_id}_2",
+                                                  "{att_1}{att_2}")))) %>%
       dplyr::select("profile", "item_id", "param")
   } else {
-    profile_item_interactions <- tibble::tibble(profile = rep(1:(2^ncol(q_matrix)),
-                                                              each = nrow(q_matrix)),
-                                                item_id = rep(seq_len(nrow(q_matrix)),
-                                                              times = (2^ncol(q_matrix)))) %>%
+    profile_item_interactions <- tibble::tibble(profile =
+                                                  rep(1:(2^ncol(q_matrix)),
+                                                      each = nrow(q_matrix)),
+                                                item_id =
+                                                  rep(seq_len(nrow(q_matrix)),
+                                                      times =
+                                                        (2^ncol(q_matrix)))) %>%
       dplyr::mutate(param = NA_character_)
   }
   pi_mat <- tibble::tibble(profile = rep(1:(2^ncol(q_matrix)),
@@ -184,12 +200,13 @@ create_fng_no_common_items_stan_tdcm <- function(q_matrix) {
                   -"measured", -"mastered", -"need_param") %>%
     tidyr::pivot_wider(names_from = "att_mastered", values_from = "mef") %>%
     dplyr::left_join(profile_item_interactions %>%
-                       dplyr::rename(int2 = .data$param),
+                       dplyr::rename(int2 = "param"),
                      by = c("profile", "item_id"),
                      relationship = "many-to-many") %>%
     tidyr::unite(col = "param", c(-.data$profile, -.data$item_id), sep = "+",
                  na.rm = TRUE) %>%
-    dplyr::mutate(stan_pi = as.character(glue::glue("pi[{item_id},{profile}] = inv_logit({param});")))
+    dplyr::mutate(stan_pi = as.character(glue::glue("pi[{item_id},{profile}] =",
+                                                    " inv_logit({param});")))
   stan_data <- glue::glue("data {{",
                           "  int<lower=1> I;                       // number of items",
                           "  int<lower=1> J;                       // number of respondents",
@@ -223,19 +240,21 @@ create_fng_no_common_items_stan_tdcm <- function(q_matrix) {
                                                       "\n"),
                                   "}}", .sep = "\n")
   }
-  stan_transformed_parameters <- glue::glue("transformed parameters {{",
-                                            "  matrix[I,C] pi;",
-                                            "",
-                                            glue::glue_collapse(glue::glue("  {pi_mat$stan_pi}"),
-                                                                "\n"),
-                                            "}}", .sep = "\n")
+  stan_transformed_parameters <-
+    glue::glue("transformed parameters {{",
+               "  matrix[I,C] pi;",
+               "",
+               glue::glue_collapse(glue::glue("  {pi_mat$stan_pi}"), "\n"),
+               "}}", .sep = "\n")
   if (all(int2_priors == "")) {
     stan_model <- glue::glue("model {{",
                              "  array[C, C] real ps;",
                              "",
                              "  // Priors",
-                             glue::glue_collapse(glue::glue("  {int0_priors}"), "\n"),
-                             glue::glue_collapse(glue::glue("  {mef_priors}"), "\n"),
+                             glue::glue_collapse(glue::glue("  {int0_priors}"),
+                                                 "\n"),
+                             glue::glue_collapse(glue::glue("  {mef_priors}"),
+                                                 "\n"),
                              "",
                              "  // Likelihood",
                              "  for (j in 1:J) {{",
@@ -356,7 +375,8 @@ create_fng_no_common_items_stan_tdcm <- function(q_matrix) {
 
   stan_code <- list(data = stan_data, parameters = stan_parameters,
                     transformed_parameters = stan_transformed_parameters,
-                    model = stan_model, generated_quantities = stan_generated_quantities)
+                    model = stan_model,
+                    generated_quantities = stan_generated_quantities)
 
   return(stan_code)
 }
