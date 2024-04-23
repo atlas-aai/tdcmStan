@@ -5,14 +5,15 @@ Version: 3.0.0.9000
 Authors@R:
     c(person(given = "Jeffrey",
              family = "Hoover",
-             role = c("aut", "cre", "cph"),
+             role = c("aut", "cre"),
              email = "jeffrey.c.hoover@gmail.com",
              comment = c(ORCID = "0000-0002-0276-0308")),
       person(given = "W. Jake",
              family = "Thompson",
              role = c("aut"),
              email = "wjakethompson@gmail.com",
-             comment = c(ORCID = "0000-0001-7339-0300")))
+             comment = c(ORCID = "0000-0001-7339-0300")),
+      person("University of Kansas", role = "cph"))
 Description: A collection of functions for automatically creating 'Stan'
       code for transition diagnostic classification models (TDCMs) as they are
       defined by Madison and Bradshaw (2018) <DOI:10.1007/s11336-018-9638-5>.
