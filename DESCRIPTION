@@ -20,7 +20,7 @@ Description: A collection of functions for automatically creating 'Stan'
       This package supports automating the creation of 'Stan' code for TDCMs,
       fungible TDCMs (i.e., TDCMs with item parameters constrained to be equal
       across all items), and multi-threaded TDCMs.
-License: GPL (>= 2)
+License: GPL (>= 3)
 Imports:
     dplyr (>= 1.0.7),
     glue (>= 1.4.2),
