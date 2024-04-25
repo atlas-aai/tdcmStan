@@ -28,7 +28,8 @@ bin_profile <- function(natt) {
 #' Calculating the number of shards and simultaneous chains.
 #'
 #' @param num_respondents An integer specifying the number of respondents.
-#' @param num_responses An integer specifying the number of responses.
+#' @param num_responses An integer specifying the number of responses (i.e.,
+#' the total number of items completed across all of the respondents).
 #' @param num_chains An integer specifying the number of chains that need to be
 #' run.
 #'
