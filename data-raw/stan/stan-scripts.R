@@ -13,5 +13,5 @@ create_threaded_stan_tdcm(q_matrix = qmatrix) %>%
 create_fng_stan_tdcm(q_matrix = qmatrix) %>%
   write_lines("inst/stan/fng-tdcm.stan")
 
-create_fng_no_common_items_stan_tdcm(q_matrix = qmatrix) %>%
+create_fng_no_common_item_tdcm(q_matrix = qmatrix) %>%
   write_lines("inst/stan/fng-no-common-tdcm.stan")

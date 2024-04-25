@@ -22,5 +22,6 @@ and the number of chains to run in parallel.
 Calculating the number of shards and simultaneous chains.
 }
 \examples{
-shard_calculator(num_respondents = 1000, num_responses = 5000, num_chains = 4)
+shard_calculator(num_respondents = 1000, num_responses = 5000,
+                 num_chains = 4)
 }

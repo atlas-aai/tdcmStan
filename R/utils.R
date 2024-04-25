@@ -17,9 +17,9 @@ bin_profile <- function(natt) {
     expand.grid() %>%
     tibble::as_tibble() %>%
     dplyr::mutate(total = rowSums(.)) %>%
-    dplyr::select(tidyselect::everything(), .data$total) %>%
+    dplyr::select(tidyselect::everything(), "total") %>%
     dplyr::arrange(.data$total, -c(.data$total)) %>%
-    dplyr::select(-.data$total)
+    dplyr::select(-"total")
   return(profiles)
 }
 

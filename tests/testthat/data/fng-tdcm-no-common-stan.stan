@@ -1,14 +1,14 @@
 data {
-  int<lower=1> I;                       // number of items
-  int<lower=1> J;                       // number of respondents
-  int<lower=1> N;                       // number of observations
-  int<lower=1> C;                       // number of classes
-  int<lower=1> A;                       // number of attributes
-  array[N, 2] int<lower=1,upper=I> ii;  // item for obs n
-  array[N, 2] int<lower=0> y;           // score for obs n
-  array[J, 2] int<lower=1,upper=N> s;   // starting row for j
-  array[J, 2] int<lower=1,upper=I> l;   // number of items for j
-  matrix[C,A] Alpha;                    // attribute pattern for each C
+  int<lower=1> I;
+  int<lower=1> J;
+  int<lower=1> N;
+  int<lower=1> C;
+  int<lower=1> A;
+  array[N, 2] int<lower=1,upper=I> ii;
+  array[N, 2] int<lower=0> y;
+  array[J, 2] int<lower=1,upper=N> s;
+  array[J, 2] int<lower=1,upper=I> l;
+  matrix[C,A] Alpha;
 }
 parameters {
   array[C] simplex[C] tau;
@@ -85,7 +85,7 @@ model {
           int i = ii[s[j, 1] + m - 1, 1];
           real tmp1 = 0;
           real tmp2 = 0;
-          if(y[s[j, 1] + m - 1, 1] != 9) {tmp1 = y[s[j, 1] + m - 1, 1] * log(pi[i,c1]) + (1 - y[s[j, 1] + m - 1, 1]) * log(1 - pi[i,c1]);}
+          if(y[s[j, 1] + m - 1, 1] != 9){tmp1 = y[s[j, 1] + m - 1, 1] * log(pi[i,c1]) + (1 - y[s[j, 1] + m - 1, 1]) * log(1 - pi[i,c1]);}
           if(y[s[j, 1] + m - 1, 2] != 9) {tmp2 = y[s[j, 1] + m - 1, 2] * log(pi[i,c2]) + (1 - y[s[j, 1] + m - 1, 2]) * log(1 - pi[i,c2]);}
           log_items[m] = tmp1 + tmp2;
         }
@@ -100,7 +100,6 @@ generated quantities {
   vector[J] log_lik;
   array[J] matrix[C, C] prob_transition_class;
   array[J] matrix[A, 2] prob_resp_attr;
-
   // Likelihood
   for (j in 1:J) {
     vector[C] tmp;
@@ -125,8 +124,8 @@ generated quantities {
 
   // latent class probabilities
   for (j in 1:J) {
-    vector[C] tmp;
-    matrix[C, C] prob_joint;
+    vector[C] tmp
+;    matrix[C, C] prob_joint;
     for (c1 in 1:C) {
       for (c2 in 1:C) {
         array[l[j, 1]] real log_items;

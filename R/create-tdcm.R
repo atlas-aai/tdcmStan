@@ -22,7 +22,7 @@ create_stan_tdcm <- function(q_matrix) {
 
   mef <- q_matrix %>%
     tibble::rowid_to_column("item_id") %>%
-    tidyr::pivot_longer(cols = c(-.data$item_id), names_to = "attr",
+    tidyr::pivot_longer(cols = c(-"item_id"), names_to = "attr",
                         values_to = "meas") %>%
     dplyr::mutate(attr = as.numeric(stringr::str_remove(.data$attr,
                                                         "att_"))) %>%
@@ -32,7 +32,7 @@ create_stan_tdcm <- function(q_matrix) {
     dplyr::pull(.data$param)
   mef_priors <- q_matrix %>%
     tibble::rowid_to_column("item_id") %>%
-    tidyr::pivot_longer(cols = c(-.data$item_id), names_to = "attr",
+    tidyr::pivot_longer(cols = c(-"item_id"), names_to = "attr",
                         values_to = "meas") %>%
     dplyr::mutate(attr = as.numeric(stringr::str_remove(.data$attr,
                                                         "att_"))) %>%
@@ -57,7 +57,7 @@ create_stan_tdcm <- function(q_matrix) {
   } else {
     int2 <- multi_att_items %>%
       dplyr::filter(.data$total == 2) %>%
-      tidyr::pivot_longer(cols = c(-.data$item_id), names_to = "attr",
+      tidyr::pivot_longer(cols = c(-"item_id"), names_to = "attr",
                           values_to = "meas") %>%
       dplyr::filter(.data$meas == 1) %>%
       dplyr::group_by(.data$item_id) %>%
@@ -77,7 +77,7 @@ create_stan_tdcm <- function(q_matrix) {
     int2_priors <- multi_att_items %>%
       dplyr::filter(.data$total == 2) %>%
       dplyr::select(-"total") %>%
-      tidyr::pivot_longer(cols = c(-.data$item_id), names_to = "attr",
+      tidyr::pivot_longer(cols = c(-"item_id"), names_to = "attr",
                           values_to = "meas") %>%
       dplyr::filter(.data$meas == 1) %>%
       dplyr::group_by(.data$item_id) %>%
@@ -105,7 +105,7 @@ create_stan_tdcm <- function(q_matrix) {
 
   if (nrow(multi_item_q_matrix) > 0) {
     items_with_interactions <- multi_item_q_matrix %>%
-      tidyr::pivot_longer(cols = c(-.data$item_id), names_to = "att",
+      tidyr::pivot_longer(cols = c(-"item_id"), names_to = "att",
                           values_to = "meas") %>%
       dplyr::mutate(meas_att = as.numeric(stringr::str_remove(.data$att,
                                                               "att_"))) %>%
@@ -128,7 +128,7 @@ create_stan_tdcm <- function(q_matrix) {
                                                 item_id =
                                                   rep(seq_len(nrow(q_matrix)),
                                                       times =
-                                                        (2^ncol(q_matrix)))) %>%
+                                                      (2^ncol(q_matrix)))) %>%
       dplyr::filter(.data$item_id %in% items_with_interactions$item_id) %>%
       dplyr::left_join(profs %>%
                          dplyr::rowwise() %>%
@@ -137,7 +137,7 @@ create_stan_tdcm <- function(q_matrix) {
                          tibble::rowid_to_column("profile") %>%
                          dplyr::filter(.data$total > 1) %>%
                          dplyr::select(-"total") %>%
-                         tidyr::pivot_longer(cols = c(-.data$profile),
+                         tidyr::pivot_longer(cols = c(-"profile"),
                                              names_to = "att",
                                              values_to = "mastered") %>%
                          dplyr::mutate(att =
@@ -151,7 +151,7 @@ create_stan_tdcm <- function(q_matrix) {
       dplyr::select(-"att") %>%
       dplyr::left_join(q_matrix %>%
                          tibble::rowid_to_column("item_id") %>%
-                         tidyr::pivot_longer(cols = c(-.data$item_id),
+                         tidyr::pivot_longer(cols = c(-"item_id"),
                                              names_to = "att",
                                              values_to = "measured") %>%
                          dplyr::mutate(measured_att =
@@ -179,11 +179,12 @@ create_stan_tdcm <- function(q_matrix) {
       dplyr::select(-"measured_att") %>%
       tidyr::pivot_wider(names_from = "meas", values_from = "measured") %>%
       dplyr::mutate(param =
-                      dplyr::case_when(
-                        .data$master < 1 ~ NA_character_,
-                        .data$master == 1 ~
-                          as.character(glue::glue("l{item_id}_2",
-                                                  "{att_1}{att_2}")))) %>%
+                      dplyr::case_when(.data$master < 1 ~ NA_character_,
+                                       .data$master == 1 ~
+                                         as.character(glue::glue("l{item_id}_2",
+                                                                 "{att_1}",
+                                                                 "{att_2}"))
+                                       )) %>%
       dplyr::select("profile", "item_id", "param")
   } else {
     profile_item_interactions <- tibble::tibble(profile =
@@ -202,13 +203,13 @@ create_stan_tdcm <- function(q_matrix) {
                                          times = (2^ncol(q_matrix)))) %>%
     dplyr::left_join(profs %>%
                        tibble::rowid_to_column("profile") %>%
-                       tidyr::pivot_longer(cols = c(-.data$profile),
+                       tidyr::pivot_longer(cols = c(-"profile"),
                                            names_to = "att_mastered",
                                            values_to = "mastered"),
                      by = "profile", relationship = "many-to-many") %>%
     dplyr::left_join(q_matrix %>%
                        tibble::rowid_to_column("item_id") %>%
-                       tidyr::pivot_longer(cols = c(-.data$item_id),
+                       tidyr::pivot_longer(cols = c(-"item_id"),
                                            names_to = "att_measured",
                                            values_to = "measured"),
                      by = "item_id", relationship = "many-to-many") %>%
@@ -218,19 +219,19 @@ create_stan_tdcm <- function(q_matrix) {
                   attribute = as.numeric(stringr::str_remove(.data$att_measured,
                                                              "att_")),
                   mef =
-                    dplyr::case_when(
-                      .data$need_param == 0 ~ NA_character_,
-                      .data$need_param > 0 ~
-                        as.character(glue::glue("l{item_id}_1",
-                                                "{attribute}")))) %>%
+                    dplyr::case_when(.data$need_param == 0 ~ NA_character_,
+                                     .data$need_param > 0 ~
+                                       as.character(glue::glue("l{item_id}_1",
+                                                               "{attribute}"))
+                                     )) %>%
     dplyr::select(-"att_measured", -"attribute", -"measured",
                   -"mastered", -"need_param") %>%
     tidyr::pivot_wider(names_from = "att_mastered", values_from = "mef") %>%
     dplyr::left_join(profile_item_interactions %>%
-                       dplyr::rename(int2 = .data$param),
+                       dplyr::rename(int2 = "param"),
                      by = c("profile", "item_id"),
                      relationship = "many-to-many") %>%
-    tidyr::unite(col = "param", c(-.data$profile, -.data$item_id), sep = "+",
+    tidyr::unite(col = "param", c(-"profile", -"item_id"), sep = "+",
                  na.rm = TRUE) %>%
     dplyr::mutate(stan_pi =
                     as.character(glue::glue("pi[{item_id},{profile}] = ",
@@ -238,16 +239,16 @@ create_stan_tdcm <- function(q_matrix) {
 
   stan_data <-
     glue::glue("data {{",
-               "  int<lower=1> I;                       // number of items",
-               "  int<lower=1> J;                       // number of respondents",
-               "  int<lower=1> N;                       // number of observations",
-               "  int<lower=1> C;                       // number of classes",
-               "  int<lower=1> A;                       // number of attributes",
-               "  array[N, 2] int<lower=1,upper=I> ii;  // item for obs n",
-               "  array[N, 2] int<lower=0,upper=1> y;   // score for obs n",
-               "  array[J, 2] int<lower=1,upper=N> s;   // starting row for j",
-               "  array[J, 2] int<lower=1,upper=I> l;   // number of items for j",
-               "  matrix[C,A] Alpha;                    // attribute pattern for each C",
+               "  int<lower=1> I;",
+               "  int<lower=1> J;",
+               "  int<lower=1> N;",
+               "  int<lower=1> C;",
+               "  int<lower=1> A;",
+               "  array[N, 2] int<lower=1,upper=I> ii;",
+               "  array[N, 2] int<lower=0,upper=1> y;",
+               "  array[J, 2] int<lower=1,upper=N> s;",
+               "  array[J, 2] int<lower=1,upper=I> l;",
+               "  matrix[C,A] Alpha;",
                "}}", .sep = "\n")
 
   if (all(int2 == "")) {
@@ -278,113 +279,137 @@ create_stan_tdcm <- function(q_matrix) {
 
   if (all(int2_priors == "")) {
     stan_model <-
-      glue::glue("model {{",
-                 "  array[C, C] real ps;",
-                 "",
-                 "  // Priors",
+      glue::glue("model {{\n",
+                 "  array[C, C] real ps;\n",
+                 "\n",
+                 "  // Priors\n",
                  glue::glue_collapse(glue::glue("  {int0_priors}"), "\n"),
+                 "\n",
                  glue::glue_collapse(glue::glue("  {mef_priors}"), "\n"),
-                 "",
-                 "  // Likelihood",
-                 "  for (j in 1:J) {{",
-                 "    vector[C] tmp;",
-                 "    for (c1 in 1:C) {{",
-                 "      for (c2 in 1:C) {{",
-                 "        array[l[j, 1]] real log_items;",
-                 "        for (m in 1:l[j, 1]) {{",
-                 "          int i = ii[s[j, 1] + m - 1, 1];",
-                 "          log_items[m] = y[s[j, 1] + m - 1, 1] * log(pi[i,c1]) + (1 - y[s[j, 1] + m - 1, 1]) * log(1 - pi[i,c1]) + y[s[j, 1] + m - 1, 2] * log(pi[i,c2]) + (1 - y[s[j, 1] + m - 1, 2]) * log(1 - pi[i,c2]);",
-                 "        }}",
-                 "        ps[c1, c2] = log(Vc[c1]) + log(tau[c1, c2]) + sum(log_items);",
-                 "      }}",
-                 "      tmp[c1] = log_sum_exp(ps[c1,]);",
-                 "    }}",
-                 "    target += log_sum_exp(tmp);",
-                 "  }}",
-                 "}}", .sep = "\n")
+                 "\n",
+                 "\n",
+                 "  // Likelihood\n",
+                 "  for (j in 1:J) {{\n",
+                 "    vector[C] tmp;\n",
+                 "    for (c1 in 1:C) {{\n",
+                 "      for (c2 in 1:C) {{\n",
+                 "        array[l[j, 1]] real log_items;\n",
+                 "        for (m in 1:l[j, 1]) {{\n",
+                 "          int i = ii[s[j, 1] + m - 1, 1];\n",
+                 "          log_items[m] = y[s[j, 1] + m - 1, 1] * ",
+                 "log(pi[i,c1]) + (1 - y[s[j, 1] + m - 1, 1]) * log(1 - ",
+                 "pi[i,c1]) + y[s[j, 1] + m - 1, 2] * log(pi[i,c2]) + (1 - ",
+                 "y[s[j, 1] + m - 1, 2]) * log(1 - pi[i,c2]);\n",
+                 "        }}\n",
+                 "        ps[c1, c2] = log(Vc[c1]) + log(tau[c1, c2]) + ",
+                 "sum(log_items);\n",
+                 "      }}\n",
+                 "      tmp[c1] = log_sum_exp(ps[c1,]);\n",
+                 "    }}\n",
+                 "    target += log_sum_exp(tmp);\n",
+                 "  }}\n",
+                 "}}\n", .sep = "")
   } else {
     stan_model <-
-      glue::glue("model {{",
-                 "  array[C, C] real ps;",
-                 "",
-                 "  // Priors",
+      glue::glue("model {{\n",
+                 "  array[C, C] real ps;\n",
+                 "\n",
+                 "  // Priors\n",
                  glue::glue_collapse(glue::glue("  {int0_priors}"), "\n"),
+                 "\n",
                  glue::glue_collapse(glue::glue("  {mef_priors}"), "\n"),
+                 "\n",
                  glue::glue_collapse(glue::glue("  {int2_priors}"), "\n"),
-                 "",
-                 "  // Likelihood",
-                 "  for (j in 1:J) {{",
-                 "    vector[C] tmp;",
-                 "    for (c1 in 1:C) {{",
-                 "      for (c2 in 1:C) {{",
-                 "        array[l[j, 1]] real log_items;",
-                 "        for (m in 1:l[j, 1]) {{",
-                 "          int i = ii[s[j, 1] + m - 1, 1];",
-                 "          log_items[m] = y[s[j, 1] + m - 1, 1] * log(pi[i,c1]) + (1 - y[s[j, 1] + m - 1, 1]) * log(1 - pi[i,c1]) + y[s[j, 1] + m - 1, 2] * log(pi[i,c2]) + (1 - y[s[j, 1] + m - 1, 2]) * log(1 - pi[i,c2]);",
-                 "        }}",
-                 "        ps[c1, c2] = log(Vc[c1]) + log(tau[c1, c2]) + sum(log_items);",
-                 "      }}",
-                 "      tmp[c1] = log_sum_exp(ps[c1,]);",
-                 "    }}",
-                 "    target += log_sum_exp(tmp);",
-                 "  }}",
-                 "}}", .sep = "\n")
+                 "\n",
+                 "\n",
+                 "  // Likelihood\n",
+                 "  for (j in 1:J) {{\n",
+                 "    vector[C] tmp;\n",
+                 "    for (c1 in 1:C) {{\n",
+                 "      for (c2 in 1:C) {{\n",
+                 "        array[l[j, 1]] real log_items;\n",
+                 "        for (m in 1:l[j, 1]) {{\n",
+                 "          int i = ii[s[j, 1] + m - 1, 1];\n",
+                 "          log_items[m] = y[s[j, 1] + m - 1, 1] * ",
+                 "log(pi[i,c1]) + (1 - y[s[j, 1] + m - 1, 1]) * log(1 - ",
+                 "pi[i,c1]) + y[s[j, 1] + m - 1, 2] * log(pi[i,c2]) + (1 - ",
+                 "y[s[j, 1] + m - 1, 2]) * log(1 - pi[i,c2]);\n",
+                 "        }}\n",
+                 "        ps[c1, c2] = log(Vc[c1]) + log(tau[c1, c2]) + ",
+                 "sum(log_items);\n",
+                 "      }}\n",
+                 "      tmp[c1] = log_sum_exp(ps[c1,]);\n",
+                 "    }}\n",
+                 "    target += log_sum_exp(tmp);\n",
+                 "  }}\n",
+                 "}}\n", .sep = "")
   }
 
   stan_generated_quantities <-
-    glue::glue("generated quantities {{",
-               "  vector[J] log_lik;",
-               "  array[J] matrix[C, C] prob_transition_class;",
-               "  array[J] matrix[A, 2] prob_resp_attr;",
-               "",
-               "  // Likelihood",
-               "  for (j in 1:J) {{",
-               "    vector[C] tmp;",
-               "    array[C, C] real ps;",
-               "    for (c1 in 1:C) {{",
-               "      for (c2 in 1:C) {{",
-               "        array[l[j, 1]] real log_items;",
-               "        for (m in 1:l[j, 1]) {{",
-               "          int i = ii[s[j, 1] + m - 1, 1];",
-               "          log_items[m] = y[s[j, 1] + m - 1, 1] * log(pi[i,c1]) + (1 - y[s[j, 1] + m - 1, 1]) * log(1 - pi[i,c1]) + y[s[j, 1] + m - 1, 2] * log(pi[i,c2]) + (1 - y[s[j, 1] + m - 1, 2]) * log(1 - pi[i,c2]);",
-               "        }}",
-               "        ps[c1, c2] = log(Vc[c1]) + log(tau[c1, c2]) + sum(log_items);",
-               "      }}",
-               "      tmp[c1] = log_sum_exp(ps[c1,]);",
-               "    }}",
-               "    log_lik[j] = log_sum_exp(tmp);",
-               "  }}",
-               "",
-               "  // latent class probabilities",
-               "  for (j in 1:J) {{",
-               "    vector[C] tmp;",
-               "    matrix[C, C] prob_joint;",
-               "    for (c1 in 1:C) {{",
-               "      for (c2 in 1:C) {{",
-               "        array[l[j, 1]] real log_items;",
-               "        for (m in 1:l[j, 1]) {{",
-               "          int i = ii[s[j, 1] + m - 1, 1];",
-               "          log_items[m] = y[s[j, 1] + m - 1, 1] * log(pi[i,c1]) + (1 - y[s[j, 1] + m - 1, 1]) * log(1 - pi[i,c1]) + y[s[j, 1] + m - 1, 2] * log(pi[i,c2]) + (1 - y[s[j, 1] + m - 1, 2]) * log(1 - pi[i,c2]);",
-               "        }}",
-               "        prob_joint[c1, c2] = log(Vc[c1]) + log(tau[c1, c2]) + sum(log_items);",
-               "      }}",
-               "    }}",
-               "    prob_transition_class[j] = exp(prob_joint) / sum(exp(prob_joint));",
-               "  }}",
-               "",
-               "  for (j in 1:J) {{",
-               "    for (a in 1:A) {{",
-               "      vector[C] prob_attr_class_t1;",
-               "      vector[C] prob_attr_class_t2;",
-               "      for (c in 1:C) {{",
-               "        prob_attr_class_t1[c] = sum(prob_transition_class[j,c,]) * Alpha[c,a];",
-               "        prob_attr_class_t2[c] = sum(prob_transition_class[j,,c]) * Alpha[c,a];",
-               "      }}",
-               "      prob_resp_attr[j,a,1] = sum(prob_attr_class_t1);",
-               "      prob_resp_attr[j,a,2] = sum(prob_attr_class_t2);",
-               "    }}",
-               "  }}",
-               "}}", .sep = "\n")
+    glue::glue("generated quantities {{\n",
+               "  vector[J] log_lik;\n",
+               "  array[J] matrix[C, C] prob_transition_class;\n",
+               "  array[J] matrix[A, 2] prob_resp_attr;\n",
+               "\n",
+               "  // Likelihood\n",
+               "  for (j in 1:J) {{\n",
+               "    vector[C] tmp;\n",
+               "    array[C, C] real ps;\n",
+               "    for (c1 in 1:C) {{\n",
+               "      for (c2 in 1:C) {{\n",
+               "        array[l[j, 1]] real log_items;\n",
+               "        for (m in 1:l[j, 1]) {{\n",
+               "          int i = ii[s[j, 1] + m - 1, 1];\n",
+               "          log_items[m] = y[s[j, 1] + m - 1, 1] * ",
+               "log(pi[i,c1]) + (1 - y[s[j, 1] + m - 1, 1]) * log(1 - ",
+               "pi[i,c1]) + y[s[j, 1] + m - 1, 2] * log(pi[i,c2]) + (1 - ",
+               "y[s[j, 1] + m - 1, 2]) * log(1 - pi[i,c2]);\n",
+               "        }}\n",
+               "        ps[c1, c2] = log(Vc[c1]) + log(tau[c1, c2]) + ",
+               "sum(log_items);\n",
+               "      }}\n",
+               "      tmp[c1] = log_sum_exp(ps[c1,]);\n",
+               "    }}\n",
+               "    log_lik[j] = log_sum_exp(tmp);\n",
+               "  }}\n",
+               "\n",
+               "  // latent class probabilities\n",
+               "  for (j in 1:J) {{\n",
+               "    vector[C] tmp;\n",
+               "    matrix[C, C] prob_joint;\n",
+               "    for (c1 in 1:C) {{\n",
+               "      for (c2 in 1:C) {{\n",
+               "        array[l[j, 1]] real log_items;\n",
+               "        for (m in 1:l[j, 1]) {{\n",
+               "          int i = ii[s[j, 1] + m - 1, 1];\n",
+               "          log_items[m] = y[s[j, 1] + m - 1, 1] * ",
+               "log(pi[i,c1]) + (1 - y[s[j, 1] + m - 1, 1]) * log(1 - ",
+               "pi[i,c1]) + y[s[j, 1] + m - 1, 2] * log(pi[i,c2]) + (1 - ",
+               "y[s[j, 1] + m - 1, 2]) * log(1 - pi[i,c2]);\n",
+               "        }}\n",
+               "        prob_joint[c1, c2] = log(Vc[c1]) + log(tau[c1, ",
+               "c2]) + sum(log_items);\n",
+               "      }}\n",
+               "    }}\n",
+               "    prob_transition_class[j] = exp(prob_joint) / ",
+               "sum(exp(prob_joint));\n",
+               "  }}\n",
+               "\n",
+               "  for (j in 1:J) {{\n",
+               "    for (a in 1:A) {{\n",
+               "      vector[C] prob_attr_class_t1;\n",
+               "      vector[C] prob_attr_class_t2;\n",
+               "      for (c in 1:C) {{\n",
+               "        prob_attr_class_t1[c] = ",
+               "sum(prob_transition_class[j,c,]) * Alpha[c,a];\n",
+               "        prob_attr_class_t2[c] = ",
+               "sum(prob_transition_class[j,,c]) * Alpha[c,a];\n",
+               "      }}\n",
+               "      prob_resp_attr[j,a,1] = sum(prob_attr_class_t1);\n",
+               "      prob_resp_attr[j,a,2] = sum(prob_attr_class_t2);\n",
+               "    }}\n",
+               "  }}\n",
+               "}}\n", .sep = "")
 
   stan_code <- list(data = stan_data,
                     parameters = stan_parameters,

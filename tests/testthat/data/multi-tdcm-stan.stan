@@ -220,18 +220,18 @@ functions {
   }
 }
 data {
-  int<lower=1> I;                       // number of items
-  int<lower=1> J;                       // number of respondents
-  int<lower=1> N;                       // number of observations
-  int<lower=1> C;                       // number of classes
-  int<lower=1> A;                       // number of attributes
-  array[N, 2] int<lower=1,upper=I> ii;  // item for obs n
-  array[N, 2] int<lower=1,upper=J> jj;  // respondent for obs n
-  array[N, 2] int<lower=0,upper=1> y;   // score for obs n
-  array[J, 2] int<lower=1,upper=N> s;   // starting row for j
-  array[J, 2] int<lower=1,upper=I> l;   // number of items for j
-  matrix[C,A] Alpha;                    // attribute pattern for each C
-  int<lower=1> n_shards;                // the number of shards to split the data into
+  int<lower=1> I;
+  int<lower=1> J;
+  int<lower=1> N;
+  int<lower=1> C;
+  int<lower=1> A;
+  array[N, 2] int<lower=1,upper=I> ii;
+  array[N, 2] int<lower=1,upper=J> jj;
+  array[N, 2] int<lower=0,upper=1> y;
+  array[J, 2] int<lower=1,upper=N> s;
+  array[J, 2] int<lower=1,upper=I> l;
+  matrix[C,A] Alpha;
+  int<lower=1> n_shards;
 }
 transformed data {
   int ys = num_elements(s) / 2 / n_shards;
