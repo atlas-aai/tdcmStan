@@ -96,7 +96,7 @@ The number of shards refers to the number of parallel processes that are used in
 The tdcmStan package includes a `shard_calculator()` function to automatically calculate how many shards can be used.
 To do this, we run:
 
-```{r calc-shards}
+```{r calc-shards, echo = TRUE, eval = FALSE}
 num_respondents <- 100
 num_responses <- 500
 num_chains <- 4
