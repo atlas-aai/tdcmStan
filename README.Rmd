@@ -21,9 +21,9 @@ developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.re
 [![R package version](https://www.r-pkg.org/badges/version/tdcmStan)](https://cran.r-project.org/package=tdcmStan)
 [![Package downloads](https://cranlogs.r-pkg.org/badges/grand-total/tdcmStan)](https://cran.r-project.org/package=tdcmStan)
 [![CRAN status](https://www.r-pkg.org/badges/version/tdcmStan)](https://CRAN.R-project.org/package=tdcmStan)
-[![R-CMD-check](https://github.com/atlas-aai/tdcmStan/workflows/R-CMD-check/badge.svg)](https://github.com/atlas-aai/tdcmStan/actions)
-[![codecov](https://codecov.io/gh/atlas-aai/tdcmStan/branch/main/graph/badge.svg?token=JtF3xtGt6g)](https://app.codecov.io/gh/atlas-aai/tdcmStan)
-[![Netlify Status](https://api.netlify.com/api/v1/badges/b82caf01-0611-4f8b-bbca-5b89b5a80791/deploy-status)](https://app.netlify.com/sites/tdcmStan/deploys)</br>
+[![R-CMD-check](https://github.com/atlas-aai/tdcmStan/workflows/R-CMD-check/badge.svg)](https://github.com/atlas-aai/tdcmStan/actions)</br>
+<!-- [![codecov](https://codecov.io/gh/atlas-aai/tdcmStan/branch/main/graph/badge.svg?token=JtF3xtGt6g)](https://app.codecov.io/gh/atlas-aai/tdcmStan) -->
+[![Netlify Status](https://api.netlify.com/api/v1/badges/b82caf01-0611-4f8b-bbca-5b89b5a80791/deploy-status)](https://app.netlify.com/sites/tdcmStan/deploys)
 [![Signed by](https://img.shields.io/badge/Keybase-Verified-brightgreen.svg)](https://keybase.io/jeffreychoover)
 ![License](https://img.shields.io/badge/License-GPL_v3-blue.svg)
 <!-- badges: end -->
@@ -55,7 +55,7 @@ To demonstrate the workflow using tdcmStan, we present an example case for gener
 For this example, we will assume that we are going to be estimating a TDCM for a 5-item 1-attribute assessment that is administered at two time points.
 The produced stan code is first saved in `stan_code`, and then the Stan code is saved as a Stan file in `Stan/tdcm.stan` where it can be read in for model estimation. 
 
-```{r ex-data}
+```{r ex-data, echo = TRUE, eval = FALSE}
 library(tibble)
 library(here)
 library(readr)
@@ -70,19 +70,19 @@ stan_code %>%
 The tdcmStan package follows a similar process for the other variants of TDCMs.
 To estimate a multi-threaded TDCM for this 5-item 1-attribute assessment, we would run:
 
-```{r multi-threaded-tdcm}
+```{r multi-threaded-tdcm, echo = TRUE, eval = FALSE}
 fng_stan_code <- create_threaded_stan_tdcm(q_matrix)
 ```
 
 To estimate a fungible TDCM for this 5-item 1-attribute assessment, we would run:
 
-```{r fng-tdcm}
+```{r fng-tdcm, echo = TRUE, eval = FALSE}
 fng_stan_code <- create_fng_stan_tdcm(q_matrix)
 ```
 
 To estimate a fungible TDCM for a 1-attribute assessment where respondents complete 5 items at each time point but respondents do not complete the same item twice, we would run:
 
-```{r no-common-items-fng-tdcm}
+```{r no-common-items-fng-tdcm, echo = TRUE, eval = FALSE}
 q_matrix <- tibble(rep(1, 10))
 fng_no_cmn_items_stan_code <- create_fng_no_common_item_tdcm(q_matrix)
 ```
