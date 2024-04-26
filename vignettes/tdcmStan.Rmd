@@ -74,7 +74,7 @@ library(readr)
 q_matrix <- tibble(rep(1, 5))
 stan_code <- create_stan_tdcm(q_matrix)
 stan_code %>%
-    readr::write_lines(here("Stan/tdcm.stan"))
+  readr::write_lines(here("Stan/tdcm.stan"))
 ```
 
 To be consistent with the assumption of item invariance described in -@tdcm, the `create_stan_tdcm()` function estimates item parameters such that the parameter values for each item are the same at Time 1 and Time 2.
