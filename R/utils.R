@@ -4,7 +4,7 @@
 #'
 #' @param natt An integer containing the number of assessed attributes.
 #'
-#' @return `profiles` A tibbler containing a class by attribute matrix listing
+#' @return `profiles` A tibble containing a class by attribute matrix listing
 #' which attributes are mastered by each latent class.
 #'
 #' @export

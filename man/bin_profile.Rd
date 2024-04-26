@@ -10,7 +10,7 @@ bin_profile(natt)
 \item{natt}{An integer containing the number of assessed attributes.}
 }
 \value{
-`profiles` A tibbler containing a class by attribute matrix listing
+`profiles` A tibble containing a class by attribute matrix listing
 which attributes are mastered by each latent class.
 }
 \description{
