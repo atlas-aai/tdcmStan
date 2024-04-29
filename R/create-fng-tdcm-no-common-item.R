@@ -156,10 +156,10 @@ create_fng_no_common_item_tdcm <- function(q_matrix) {
       dplyr::mutate(param =
                       dplyr::case_when(.data$master < 1 ~ NA_character_,
                                        .data$master == 1 ~
-                                         as.character(glue::glue("l{item_id}_2",
-                                                                 "{att_1}",
-                                                                 "{att_2}"))
-                                       )) %>%
+                                         as.character(
+                                           glue::glue("l{item_id}_2",
+                                                      "{att_1}",
+                                                      "{att_2}")))) %>%
       dplyr::select("profile", "item_id", "param")
   } else {
     profile_item_interactions <- tibble::tibble(profile =
