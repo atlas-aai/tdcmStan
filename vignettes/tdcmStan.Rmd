@@ -54,7 +54,7 @@ A full demonstration of how to install and use rstan and cmdstanr is outside of 
 
 ## Usage
 
-Once tdcmStan has been installed, we're ready to create *Stan* code for estimating a TDCM.
+Once tdcmStan has been installed, we are ready to create *Stan* code for estimating a TDCM.
 
 ```{r load-pkg}
 library(tdcmStan)
