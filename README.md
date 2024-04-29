@@ -13,10 +13,9 @@ developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.re
 version](https://www.r-pkg.org/badges/version/tdcmStan)](https://cran.r-project.org/package=tdcmStan)
 [![Package
 downloads](https://cranlogs.r-pkg.org/badges/grand-total/tdcmStan)](https://cran.r-project.org/package=tdcmStan)
-[![CRAN
-status](https://www.r-pkg.org/badges/version/tdcmStan)](https://CRAN.R-project.org/package=tdcmStan)
 [![R-CMD-check](https://github.com/atlas-aai/tdcmStan/workflows/R-CMD-check/badge.svg)](https://github.com/atlas-aai/tdcmStan/actions)</br>
-<!-- [![codecov](https://codecov.io/gh/atlas-aai/tdcmStan/branch/main/graph/badge.svg?token=JtF3xtGt6g)](https://app.codecov.io/gh/atlas-aai/tdcmStan) -->
+[![Codecov test
+coverage](https://codecov.io/gh/atlas-aai/tdcmStan/branch/main/graph/badge.svg)](https://app.codecov.io/gh/atlas-aai/tdcmStan?branch=main)
 [![Netlify
 Status](https://api.netlify.com/api/v1/badges/b82caf01-0611-4f8b-bbca-5b89b5a80791/deploy-status)](https://app.netlify.com/sites/tdcmStan/deploys)
 [![Signed
