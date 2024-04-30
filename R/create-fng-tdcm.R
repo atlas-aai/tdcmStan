@@ -9,10 +9,12 @@
 #' @export
 #'
 #' @examples
-#' qmatrix = tibble::tibble(att_1 = c(1, 0, 1, 0, 1, 1),
-#'                          att_2 = c(0, 1, 0, 1, 1, 1))
+#' qmatrix = tibble::tibble(att_1 = c(1, 0, 1, 0, 1, 0),
+#'                          att_2 = c(0, 1, 0, 1, 0, 1))
 #' create_fng_stan_tdcm(q_matrix = qmatrix)
 create_fng_stan_tdcm <- function(q_matrix) {
+  q_matrix <- check_multi_attribute(q_matrix)
+
   profs <- bin_profile(ncol(q_matrix))
 
   colnames(q_matrix) <- glue::glue("att_{1:ncol(q_matrix)}")

@@ -17,7 +17,7 @@ Automating the creation of fungible Stan code for a TDCM when there are no
 common items.
 }
 \examples{
-qmatrix = tibble::tibble(att_1 = c(1, 0, 1, 0, 1, 1),
-                         att_2 = c(0, 1, 0, 1, 1, 1))
+qmatrix = tibble::tibble(att_1 = c(1, 0, 1, 0, 1, 0),
+                         att_2 = c(0, 1, 0, 1, 0, 1))
 create_fng_no_common_item_tdcm(q_matrix = qmatrix)
 }
