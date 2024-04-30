@@ -4,7 +4,19 @@
     <loc>/404.html</loc>
   </url>
   <url>
+    <loc>/CODE_OF_CONDUCT.html</loc>
+  </url>
+  <url>
+    <loc>/CONTRIBUTING.html</loc>
+  </url>
+  <url>
     <loc>/LICENSE-text.html</loc>
+  </url>
+  <url>
+    <loc>/articles/index.html</loc>
+  </url>
+  <url>
+    <loc>/articles/tdcmStan.html</loc>
   </url>
   <url>
     <loc>/authors.html</loc>
@@ -19,7 +31,7 @@
     <loc>/reference/bin_profile.html</loc>
   </url>
   <url>
-    <loc>/reference/create_fng_no_common_items_stan_tdcm.html</loc>
+    <loc>/reference/create_fng_no_common_item_tdcm.html</loc>
   </url>
   <url>
     <loc>/reference/create_fng_stan_tdcm.html</loc>
@@ -34,6 +46,12 @@
     <loc>/reference/index.html</loc>
   </url>
   <url>
+    <loc>/reference/pipe.html</loc>
+  </url>
+  <url>
     <loc>/reference/shard_calculator.html</loc>
+  </url>
+  <url>
+    <loc>/reference/tidyeval.html</loc>
   </url>
 </urlset>
