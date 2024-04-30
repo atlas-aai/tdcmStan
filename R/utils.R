@@ -4,7 +4,7 @@
 #'
 #' @param natt An integer containing the number of assessed attributes.
 #'
-#' @return `profiles` A tibbler containing a class by attribute matrix listing
+#' @return `profiles` A tibble containing a class by attribute matrix listing
 #' which attributes are mastered by each latent class.
 #'
 #' @export
@@ -17,9 +17,9 @@ bin_profile <- function(natt) {
     expand.grid() %>%
     tibble::as_tibble() %>%
     dplyr::mutate(total = rowSums(.)) %>%
-    dplyr::select(tidyselect::everything(), .data$total) %>%
+    dplyr::select(tidyselect::everything(), "total") %>%
     dplyr::arrange(.data$total, -c(.data$total)) %>%
-    dplyr::select(-.data$total)
+    dplyr::select(-"total")
   return(profiles)
 }
 
@@ -28,7 +28,8 @@ bin_profile <- function(natt) {
 #' Calculating the number of shards and simultaneous chains.
 #'
 #' @param num_respondents An integer specifying the number of respondents.
-#' @param num_responses An integer specifying the number of responses.
+#' @param num_responses An integer specifying the number of responses (i.e.,
+#' the total number of items completed across all of the respondents).
 #' @param num_chains An integer specifying the number of chains that need to be
 #' run.
 #'
@@ -38,7 +39,8 @@ bin_profile <- function(natt) {
 #' @export
 #'
 #' @examples
-#' shard_calculator(num_respondents = 1000, num_responses = 5000, num_chains = 4)
+#' shard_calculator(num_respondents = 1000, num_responses = 5000,
+#'                  num_chains = 4)
 shard_calculator <- function(num_respondents, num_responses, num_chains) {
   max_shards <- parallel::detectCores() - 1
 
@@ -46,8 +48,8 @@ shard_calculator <- function(num_respondents, num_responses, num_chains) {
   possible_shards[1] <- 1
   kk <- 2
 
-  for(jj in 2:max_shards) {
-    if(num_respondents %% jj == 0 & num_responses %% jj == 0) {
+  for (jj in 2:max_shards) {
+    if (num_respondents %% jj == 0 && num_responses %% jj == 0) {
       possible_shards[kk] <- jj
       kk <- kk + 1
     }
@@ -55,12 +57,12 @@ shard_calculator <- function(num_respondents, num_responses, num_chains) {
 
   possible_parallel_chains <- floor(parallel::detectCores() / possible_shards)
 
-  for(kk in 1:length(possible_parallel_chains)) {
-    if(possible_parallel_chains[kk] >= parallel::detectCores()) {
+  for (kk in seq_len(length(possible_parallel_chains))) {
+    if (possible_parallel_chains[kk] >= parallel::detectCores()) {
       possible_parallel_chains[kk] <- parallel::detectCores() - 1
     }
 
-    if(possible_parallel_chains[kk] > num_chains) {
+    if (possible_parallel_chains[kk] > num_chains) {
       possible_parallel_chains[kk] <- num_chains
     }
   }
@@ -68,14 +70,14 @@ shard_calculator <- function(num_respondents, num_responses, num_chains) {
   optimal_config <- tibble::tibble(parallel_chains = possible_parallel_chains,
                                    threads_per_chain = possible_shards) %>%
     dplyr::mutate(total_cores = .data$parallel_chains * .data$threads_per_chain,
-                  parallel_chains = dplyr::case_when(.data$total_cores >=
-                                                       parallel::detectCores() ~
-                                                       floor((parallel::detectCores() -
-                                                                1) /
-                                                               .data$threads_per_chain),
-                                                     T ~ .data$parallel_chains),
+                  parallel_chains =
+                    dplyr::case_when(.data$total_cores >=
+                                       parallel::detectCores() ~
+                                       floor((parallel::detectCores() - 1) /
+                                               .data$threads_per_chain),
+                                     TRUE ~ .data$parallel_chains),
                   total_cores = .data$parallel_chains *
-                    .data$threads_per_chain) %>%
+                  .data$threads_per_chain) %>%
     dplyr::group_by(.data$parallel_chains) %>%
     dplyr::filter(.data$threads_per_chain == max(.data$threads_per_chain)) %>%
     dplyr::ungroup() %>%

@@ -1,0 +1,136 @@
+---
+title: "Using tdcmStan"
+output: rmarkdown::html_vignette
+bibliography: bib/references.bib
+csl: bib/apa.csl
+link-citations: true
+vignette: >
+  %\VignetteIndexEntry{Using tdcmStan}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+
+Transition diagnostic classification models (TDCMs) are psychometric models that estimate respondents latent class membership longitudinally [@tdcm].
+TDCMs are commonly estimated using the maximum likelihood algorithm.
+However, there are benefits to estimating Bayesian models [e.g., @zhan_2019], and we can use *Stan* to estimate Bayesian TDCMs.
+The problem is that developing *Stan* code is both time intensive and requires significant technical expertise.
+
+We aimed to address that problem through the tdcmStan package.
+The goal of tdcmStan is to facilitate the production of *Stan* code for estimating TDCMs.
+The tdcmStan packages creates the *Stan* code for estimating a TDCM, without requiring extensive knowledge of *Stan* syntax.
+For those with experience in producing *Stan* syntax, the *Stan* code produced by the tdcmStan package can be further editted to meet specific needs. 
+
+## Installation
+
+### tdcmStan
+
+You can install the release version of tdcmStan from [CRAN](https://cran.r-project.org/):
+
+```r
+install.packages("tdcmStan")
+```
+
+To install the development version from [GitHub](https://github.com/atlas-aai/tdcmStan) use:
+
+``` r
+# install.packages("remotes")
+remotes::install_github("atlas-aai/tdcmStan")
+```
+
+### rstan and cmdstanr
+
+To estimate models using *Stan* code, users will need an installation of [rstan](https://mc-stan.org/rstan/) or [cmdstanr](https://mc-stan.org/cmdstanr/).
+The instructions for installing rstan can be found here: [RStan Getting Started](https://github.com/stan-dev/rstan/wiki/RStan-Getting-Started) for [Windows](https://github.com/stan-dev/rstan/wiki/Configuring-C---Toolchain-for-Windows), [Mac](https://github.com/stan-dev/rstan/wiki/Configuring-C---Toolchain-for-Mac), and [Linux](https://github.com/stan-dev/rstan/wiki/Configuring-C-Toolchain-for-Linux).
+The instructions for installing cmdstanr can be found here: [Getting Started with CmdStanR](https://mc-stan.org/cmdstanr/articles/cmdstanr.html).
+A full demonstration of how to install and use rstan and cmdstanr is outside of the scope of this vignette.
+
+## Usage
+
+Once tdcmStan has been installed, we are ready to create *Stan* code for estimating a TDCM.
+
+```{r load-pkg}
+library(tdcmStan)
+```
+
+### TDCM
+
+To demonstrate the workflow using tdcmStan, we present an example case for generating *Stan* code.
+For this example, we will assume that we are going to be estimating a TDCM for a 5-item 1-attribute assessment that is administered at two time points.
+In our example, the resulting *Stan* code is first saved in the `stan_code` object, and then the *Stan* code is saved as a .stan file where it can be read in for model estimation. 
+
+```{r ex-data, echo = TRUE, eval = FALSE}
+library(tibble)
+library(here)
+library(readr)
+
+q_matrix <- tibble(rep(1, 5))
+stan_code <- create_stan_tdcm(q_matrix)
+stan_code %>%
+  readr::write_lines(here("Stan/tdcm.stan"))
+```
+
+To be consistent with the assumption of item invariance described in -@tdcm, the `create_stan_tdcm()` function estimates item parameters such that the parameter values for each item are the same at Time 1 and Time 2.
+
+### Multi-Threaded TDCM
+
+In many cases, the process for estimating Bayesian TDCMs may be time intensive.
+To work around this, we can use estimate the TDCM with multi-threading, which uses parallel processes to increase estimation efficiency and to reduce estimation time.
+
+To estimate a TDCM with multi-threading, we would run:
+
+```{r multi-threaded-tdcm, echo = TRUE, eval = FALSE}
+fng_stan_code <- create_threaded_stan_tdcm(q_matrix)
+```
+
+### Calculating the Number of Shards
+
+The number of shards refers to the number of parallel processes that are used in a multi-threaded TDCM.
+The tdcmStan package includes a `shard_calculator()` function to automatically calculate how many shards can be used.
+To do this, we run:
+
+```{r calc-shards, echo = TRUE, eval = FALSE}
+num_respondents <- 100
+num_responses <- 500
+num_chains <- 4
+shard_calculator(num_respondents, num_responses, num_chains)
+```
+
+### Fungible TDCM
+
+The tdcmStan package follows a similar process for producing *Stan* code for TDCMs with other constraints.
+In addition to the assumption of item invariance across time points, we can assume item fungibility.
+Fungibility means that the items measuring an attribute are assumed to have the same item parameter values.
+For example, in our running example, all five items measure the attribute.
+In a fungible model, this means that there will be one shared item intercept parameter and one shared item main effect parameter for all five items. 
+
+To estimate a fungible TDCM for this 5-item 1-attribute assessment, we would run:
+
+```{r fng-tdcm, echo = TRUE, eval = FALSE}
+fng_stan_code <- create_fng_stan_tdcm(q_matrix)
+```
+
+### Fungible TDCM with No Common Items
+
+The previous examples have created *Stan* code for estimating a TDCM under the assumption that the respondents are completing the same items at each assessment point; however, this may not always be the case for assessment programs.
+Some assessment programs may only allow respondents to complete each item once.
+
+To estimate a fungible TDCM for a 1-attribute assessment where respondents complete different items at each assessment point, we would run:
+
+```{r no-common-items-fng-tdcm, echo = TRUE, eval = FALSE}
+q_matrix <- tibble(rep(1, 10))
+fng_no_cmn_items_stan_code <- create_fng_no_common_item_tdcm(q_matrix)
+```
+
+In this example, the assessment consists of five items that are completed at each time point, but respondents do not complete the same item twice.
+This means that respondents would be completing five of the items at Time 1 and the other five items at Time 2, and the items completed at Time 1 do not necessarily have to be consistent across all of the respondents.
+For example, Respondent 1 might complete Items 2, 4, 6, 8, and 10 at Time 1 and the remaining items at Time 2, while Respondent 2 might complete Items 1, 2, 3, 4, and 5 at Time 1 and the remaining items at Time 2.
+
+## References

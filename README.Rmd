@@ -17,23 +17,76 @@ knitr::opts_chunk$set(
 [![Project Status: Active – The project has reached a stable, usable
 state and is being actively
 developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
-[![CRAN status](https://www.r-pkg.org/badges/version/tdcmStan)](https://CRAN.R-project.org/package=tdcmStan)
-[![R-CMD-check](https://github.com/atlas-aai/tdcmStan/workflows/R-CMD-check/badge.svg)](https://github.com/atlas-aai/tdcmStan/actions)
-![Minimal R
-Version](https://img.shields.io/badge/R%3E%3D-3.5.0-blue.svg)
-![License](https://img.shields.io/badge/License-GPL-blue.svg)
+[![lifecycle](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html)
+[![R package version](https://www.r-pkg.org/badges/version/tdcmStan)](https://cran.r-project.org/package=tdcmStan)
+[![Package downloads](https://cranlogs.r-pkg.org/badges/grand-total/tdcmStan)](https://cran.r-project.org/package=tdcmStan)
+[![R-CMD-check](https://github.com/atlas-aai/tdcmStan/workflows/R-CMD-check/badge.svg)](https://github.com/atlas-aai/tdcmStan/actions)</br>
+[![Codecov test coverage](https://codecov.io/gh/atlas-aai/tdcmStan/branch/main/graph/badge.svg)](https://app.codecov.io/gh/atlas-aai/tdcmStan?branch=main)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/b82caf01-0611-4f8b-bbca-5b89b5a80791/deploy-status)](https://app.netlify.com/sites/tdcmStan/deploys)
+[![Signed by](https://img.shields.io/badge/Keybase-Verified-brightgreen.svg)](https://keybase.io/jeffreychoover)
+![License](https://img.shields.io/badge/License-GPL_v3-blue.svg)
 <!-- badges: end -->
+
+The goal of tdcmStan is to facilitate the production of Stan code for estimating transition diagnostic classification models (TDCMs).
+TDCMs are psychometric models that estimate respondents latent class membership longitudinally.
+Using [R](https://www.r-project.org/), tdcmStan uses the Q-matrix to automatically produce the Stan code.
+The tdcmStan package supports unconstrained TDCMs along with fungible TDCMs (i.e., TDCMs where the items parameters are assumed to be equivalent) and fungible TDCMs with no common items across time points.
+The tdcmStan package also supports estimation of multi-threaded TDCMs, which increases the efficiency of model estimation.
 
 ## Installation
 
-You can install from CRAN with:
+You can install the release version of tdcmStan from [CRAN](https://cran.r-project.org/):
 
-```{r cran-install, echo = TRUE, eval = FALSE}
+```r
 install.packages("tdcmStan")
 ```
 
-You can install from GitHub with:
+To install the development version from [GitHub](https://github.com/) use:
 
-```{r gh-install, echo = TRUE, eval = FALSE}
-devtools::install_github("atlas-aai/tdcmStan", dependencies = TRUE)
+``` r
+# install.packages("remotes")
+remotes::install_github("atlas-aai/tdcmStan")
 ```
+
+## Usage
+
+To demonstrate the workflow using tdcmStan, we present an example case for generating *Stan* code.
+For this example, we will assume that we are going to be estimating a TDCM for a 5-item 1-attribute assessment that is administered at two time points.
+The produced stan code is first saved in `stan_code`, and then the Stan code is saved as a Stan file in `Stan/tdcm.stan` where it can be read in for model estimation. 
+
+```{r ex-data, echo = TRUE, eval = FALSE}
+library(tibble)
+library(here)
+library(readr)
+library(tdcmStan)
+
+q_matrix <- tibble(rep(1, 5))
+stan_code <- create_stan_tdcm(q_matrix)
+stan_code %>%
+    readr::write_lines(here("Stan/tdcm.stan"))
+```
+
+The tdcmStan package follows a similar process for the other variants of TDCMs.
+To estimate a multi-threaded TDCM for this 5-item 1-attribute assessment, we would run:
+
+```{r multi-threaded-tdcm, echo = TRUE, eval = FALSE}
+fng_stan_code <- create_threaded_stan_tdcm(q_matrix)
+```
+
+To estimate a fungible TDCM for this 5-item 1-attribute assessment, we would run:
+
+```{r fng-tdcm, echo = TRUE, eval = FALSE}
+fng_stan_code <- create_fng_stan_tdcm(q_matrix)
+```
+
+To estimate a fungible TDCM for a 1-attribute assessment where respondents complete 5 items at each time point but respondents do not complete the same item twice, we would run:
+
+```{r no-common-items-fng-tdcm, echo = TRUE, eval = FALSE}
+q_matrix <- tibble(rep(1, 10))
+fng_no_cmn_items_stan_code <- create_fng_no_common_item_tdcm(q_matrix)
+```
+
+Contributions are welcome.
+To ensure a smooth process, please review the [Contributing Guide](https://dcm2.info/dev/CONTRIBUTING.html).
+Please note that the dcm2 project is released with a [Contributor Code of Conduct](https://dcm2.info/CODE_OF_CONDUCT.html).
+By contributing to this project, you agree to abide by its terms.

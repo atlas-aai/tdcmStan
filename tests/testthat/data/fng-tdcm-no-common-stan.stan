@@ -5,7 +5,7 @@ data {
   int<lower=1> C;
   int<lower=1> A;
   array[N, 2] int<lower=1,upper=I> ii;
-  array[N, 2] int<lower=0,upper=1> y;
+  array[N, 2] int<lower=0> y;
   array[J, 2] int<lower=1,upper=N> s;
   array[J, 2] int<lower=1,upper=I> l;
   matrix[C,A] Alpha;
@@ -83,7 +83,11 @@ model {
         array[l[j, 1]] real log_items;
         for (m in 1:l[j, 1]) {
           int i = ii[s[j, 1] + m - 1, 1];
-          log_items[m] = y[s[j, 1] + m - 1, 1] * log(pi[i,c1]) + (1 - y[s[j, 1] + m - 1, 1]) * log(1 - pi[i,c1]) + y[s[j, 1] + m - 1, 2] * log(pi[i,c2]) + (1 - y[s[j, 1] + m - 1, 2]) * log(1 - pi[i,c2]);
+          real tmp1 = 0;
+          real tmp2 = 0;
+          if(y[s[j, 1] + m - 1, 1] != 9) {tmp1 = y[s[j, 1] + m - 1, 1] * log(pi[i,c1]) + (1 - y[s[j, 1] + m - 1, 1]) * log(1 - pi[i,c1]);}
+          if(y[s[j, 1] + m - 1, 2] != 9) {tmp2 = y[s[j, 1] + m - 1, 2] * log(pi[i,c2]) + (1 - y[s[j, 1] + m - 1, 2]) * log(1 - pi[i,c2]);}
+          log_items[m] = tmp1 + tmp2;
         }
         ps[c1, c2] = log(Vc[c1]) + log(tau[c1, c2]) + sum(log_items);
       }
@@ -106,7 +110,11 @@ generated quantities {
         array[l[j, 1]] real log_items;
         for (m in 1:l[j, 1]) {
           int i = ii[s[j, 1] + m - 1, 1];
-          log_items[m] = y[s[j, 1] + m - 1, 1] * log(pi[i,c1]) + (1 - y[s[j, 1] + m - 1, 1]) * log(1 - pi[i,c1]) + y[s[j, 1] + m - 1, 2] * log(pi[i,c2]) + (1 - y[s[j, 1] + m - 1, 2]) * log(1 - pi[i,c2]);
+          real tmp1 = 0;
+          real tmp2 = 0;
+          if(y[s[j, 1] + m - 1, 1] != 9) {tmp1 = y[s[j, 1] + m - 1, 1] * log(pi[i,c1]) + (1 - y[s[j, 1] + m - 1, 1]) * log(1 - pi[i,c1]);}
+          if(y[s[j, 1] + m - 1, 2] != 9) {tmp2 = y[s[j, 1] + m - 1, 2] * log(pi[i,c2]) + (1 - y[s[j, 1] + m - 1, 2]) * log(1 - pi[i,c2]);}
+          log_items[m] = tmp1 + tmp2;
         }
         ps[c1, c2] = log(Vc[c1]) + log(tau[c1, c2]) + sum(log_items);
       }
@@ -124,7 +132,11 @@ generated quantities {
         array[l[j, 1]] real log_items;
         for (m in 1:l[j, 1]) {
           int i = ii[s[j, 1] + m - 1, 1];
-          log_items[m] = y[s[j, 1] + m - 1, 1] * log(pi[i,c1]) + (1 - y[s[j, 1] + m - 1, 1]) * log(1 - pi[i,c1]) + y[s[j, 1] + m - 1, 2] * log(pi[i,c2]) + (1 - y[s[j, 1] + m - 1, 2]) * log(1 - pi[i,c2]);
+          real tmp1 = 0;
+          real tmp2 = 0;
+          if(y[s[j, 1] + m - 1, 1] != 9) {tmp1 = y[s[j, 1] + m - 1, 1] * log(pi[i,c1]) + (1 - y[s[j, 1] + m - 1, 1]) * log(1 - pi[i,c1]);}
+          if(y[s[j, 1] + m - 1, 2] != 9) {tmp2 = y[s[j, 1] + m - 1, 2] * log(pi[i,c2]) + (1 - y[s[j, 1] + m - 1, 2]) * log(1 - pi[i,c2]);}
+          log_items[m] = tmp1 + tmp2;
         }
         prob_joint[c1, c2] = log(Vc[c1]) + log(tau[c1, c2]) + sum(log_items);
       }

@@ -9,7 +9,8 @@ shard_calculator(num_respondents, num_responses, num_chains)
 \arguments{
 \item{num_respondents}{An integer specifying the number of respondents.}
 
-\item{num_responses}{An integer specifying the number of responses.}
+\item{num_responses}{An integer specifying the number of responses (i.e.,
+the total number of items completed across all of the respondents).}
 
 \item{num_chains}{An integer specifying the number of chains that need to be
 run.}
@@ -22,5 +23,6 @@ and the number of chains to run in parallel.
 Calculating the number of shards and simultaneous chains.
 }
 \examples{
-shard_calculator(num_respondents = 1000, num_responses = 5000, num_chains = 4)
+shard_calculator(num_respondents = 1000, num_responses = 5000,
+                 num_chains = 4)
 }

@@ -1,20 +1,21 @@
 data {
-  int<lower=1> I;
-  int<lower=1> J;
-  int<lower=1> N;
-  int<lower=1> C;
-  int<lower=1> A;
-  array[N, 2] int<lower=1,upper=I> ii;
-  array[N, 2] int<lower=0,upper=1> y;
-  array[J, 2] int<lower=1,upper=N> s;
-  array[J, 2] int<lower=1,upper=I> l;
-  matrix[C,A] Alpha;
+  int<lower=1> I;                      // number of items
+  int<lower=1> J;                      // number of respondents
+  int<lower=1> N;                      // number of observations
+  int<lower=1> C;                      // number of classes
+  int<lower=1> A;                      // number of attributes
+  array[N, 2] int<lower=1,upper=I> ii; // item for obs n
+  array[N, 2] int<lower=0,upper=1> y;  // score for obs n
+  array[J, 2] int<lower=1,upper=N> s;  // starting row for j
+  array[J, 2] int<lower=1,upper=I> l;  // number of items for j
+  matrix[C,A] Alpha;                   // attribute pattern for each C
 }
 parameters {
   array[C] simplex[C] tau;
   simplex[C] Vc;
   real l_0;
   real<lower=0> l_1;
+  real<lower=-1 * fmin(l4_11, l4_12)> l4_212;
 }
 transformed parameters {
   matrix[I,C] pi;
@@ -27,46 +28,30 @@ transformed parameters {
   pi[6,1] = inv_logit(l_0);
   pi[7,1] = inv_logit(l_0);
   pi[8,1] = inv_logit(l_0);
-  pi[9,1] = inv_logit(l_0);
-  pi[10,1] = inv_logit(l_0);
-  pi[11,1] = inv_logit(l_0);
-  pi[12,1] = inv_logit(l_0);
-  pi[13,1] = inv_logit(l_0);
-  pi[14,1] = inv_logit(l_0);
-  pi[15,1] = inv_logit(l_0);
-  pi[16,1] = inv_logit(l_0);
-  pi[17,1] = inv_logit(l_0);
-  pi[18,1] = inv_logit(l_0);
-  pi[19,1] = inv_logit(l_0);
-  pi[20,1] = inv_logit(l_0);
-  pi[21,1] = inv_logit(l_0);
-  pi[22,1] = inv_logit(l_0);
-  pi[23,1] = inv_logit(l_0);
-  pi[24,1] = inv_logit(l_0);
   pi[1,2] = inv_logit(l_0+l_1);
   pi[2,2] = inv_logit(l_0+l_1);
   pi[3,2] = inv_logit(l_0+l_1);
   pi[4,2] = inv_logit(l_0+l_1);
-  pi[5,2] = inv_logit(l_0+l_1);
-  pi[6,2] = inv_logit(l_0+l_1);
-  pi[7,2] = inv_logit(l_0+l_1);
-  pi[8,2] = inv_logit(l_0+l_1);
-  pi[9,2] = inv_logit(l_0+l_1);
-  pi[10,2] = inv_logit(l_0+l_1);
-  pi[11,2] = inv_logit(l_0+l_1);
-  pi[12,2] = inv_logit(l_0+l_1);
-  pi[13,2] = inv_logit(l_0+l_1);
-  pi[14,2] = inv_logit(l_0+l_1);
-  pi[15,2] = inv_logit(l_0+l_1);
-  pi[16,2] = inv_logit(l_0+l_1);
-  pi[17,2] = inv_logit(l_0+l_1);
-  pi[18,2] = inv_logit(l_0+l_1);
-  pi[19,2] = inv_logit(l_0+l_1);
-  pi[20,2] = inv_logit(l_0+l_1);
-  pi[21,2] = inv_logit(l_0+l_1);
-  pi[22,2] = inv_logit(l_0+l_1);
-  pi[23,2] = inv_logit(l_0+l_1);
-  pi[24,2] = inv_logit(l_0+l_1);
+  pi[5,2] = inv_logit(l_0);
+  pi[6,2] = inv_logit(l_0);
+  pi[7,2] = inv_logit(l_0);
+  pi[8,2] = inv_logit(l_0);
+  pi[1,3] = inv_logit(l_0);
+  pi[2,3] = inv_logit(l_0);
+  pi[3,3] = inv_logit(l_0);
+  pi[4,3] = inv_logit(l_0+l_1);
+  pi[5,3] = inv_logit(l_0+l_1);
+  pi[6,3] = inv_logit(l_0+l_1);
+  pi[7,3] = inv_logit(l_0+l_1);
+  pi[8,3] = inv_logit(l_0+l_1);
+  pi[1,4] = inv_logit(l_0+l_1);
+  pi[2,4] = inv_logit(l_0+l_1);
+  pi[3,4] = inv_logit(l_0+l_1);
+  pi[4,4] = inv_logit(l_0+l_1+l_1+l4_212);
+  pi[5,4] = inv_logit(l_0+l_1);
+  pi[6,4] = inv_logit(l_0+l_1);
+  pi[7,4] = inv_logit(l_0+l_1);
+  pi[8,4] = inv_logit(l_0+l_1);
 }
 model {
   array[C, C] real ps;
@@ -74,6 +59,7 @@ model {
   // Priors
   l_0 ~ normal(0, 2);
   l_1 ~ lognormal(0, 1);
+  l4_212 ~ normal(0, 2);
 
   // Likelihood
   for (j in 1:J) {
