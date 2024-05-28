@@ -252,11 +252,7 @@ create_fng_no_common_item_tdcm <- function(q_matrix) {
                                           "    for (t in 1:2) {{\n",
                                           "      for (m in 1:l[j, t]) {{\n",
                                           "        int i = ii[s[j, t] + m - 1, t];\n",
-<<<<<<< HEAD
                                           "        y_rep[s[j, t] + m - 1, t] = bernoulli_rng(pi[i, j_class[j, t]]);\n",
-=======
-                                          "        y_rep[x[j, t] + m - 1, t] = bernoulli_rng(pi[i, j_class[j, t]]);\n",
->>>>>>> 7a26596bf53233e531dd1e9ef69f6d13fe1d3eae
                                           "      }}\n",
                                           "    }}\n",
                                           "  }}\n",
