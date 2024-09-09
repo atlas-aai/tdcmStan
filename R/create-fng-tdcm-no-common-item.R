@@ -248,7 +248,7 @@ create_fng_no_common_item_tdcm <- function(q_matrix) {
                                           "    vector[C] j_probs = Vc / sum(Vc);\n",
                                           "    j_class[j, 1] = categorical_rng(j_probs);\n",
                                           "    tau_tmp = tau[j_class[j, 1], ];\n",
-                                          "    j_class[j, 2] = categorical_rng(j_probs);\n",
+                                          "    j_class[j, 2] = categorical_rng(tau_tmp);\n",
                                           "    for (t in 1:2) {{\n",
                                           "      for (m in 1:l[j, t]) {{\n",
                                           "        int i = ii[s[j, t] + m - 1, t];\n",
