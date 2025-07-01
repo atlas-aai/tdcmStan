@@ -4,10 +4,27 @@
 \alias{create_stan_tdcm}
 \title{Creating TDCM Stan Code}
 \usage{
-create_stan_tdcm(q_matrix)
+create_stan_tdcm(
+  q_matrix,
+  t = 2,
+  multithread = TRUE,
+  fungible = FALSE,
+  repeated_items = TRUE
+)
 }
 \arguments{
 \item{q_matrix}{A tibble containing the assessment Q-matrix.}
+
+\item{t}{An intenger containing the number of assessment points.}
+
+\item{multithread}{A logical variable indicating whether to using
+multithreading.}
+
+\item{fungible}{A logical variable indicating whether to estimate a fungible
+model.}
+
+\item{repeated_items}{A logical variable indicating whether the same
+items were administered at each assessment point.}
 }
 \value{
 `stan_code` A list containing the text for the Stan code blocks.
@@ -18,5 +35,6 @@ Automating the creation of Stan code for a TDCM.
 \examples{
 qmatrix = tibble::tibble(att_1 = c(1, 0, 1, 0, 1, 1),
                          att_2 = c(0, 1, 0, 1, 1, 1))
-create_stan_tdcm(q_matrix = qmatrix)
+create_stan_tdcm(q_matrix = qmatrix, t = 2, multithread = FALSE,
+fungible = FALSE)
 }
